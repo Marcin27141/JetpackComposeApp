@@ -1,5 +1,6 @@
 package com.example.jetpackcomposeapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -34,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,44 +49,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             JetpackComposeAppTheme {
-                var customItem by remember {
-                    mutableStateOf("")
-                }
-                var listItems by remember {
-                    mutableStateOf(listOf<String>())
-                }
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    //Greeting("Android")
-                    Column (horizontalAlignment = Alignment.CenterHorizontally) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            OutlinedTextField(
-                                value = customItem,
-                                onValueChange = { text ->
-                                    customItem = text
-                                },
-                                modifier = Modifier.padding(16.dp, 16.dp, 0.dp, 0.dp).weight(1f))
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Button(
-                                onClick = {
-                                    if (customItem.isNotBlank()) {
-                                        listItems = listItems + customItem
-                                    }
-                                    customItem = ""
-
-                                },
-                                modifier = Modifier.padding(16.dp)) {
-                                Text(text = "Add")
-                            }
-                        }
-                        ItemsList(listItems)
-                    }
-                }
+                val name = intent?.getStringExtra("Name") ?: "Name"
+                val nick = intent?.getStringExtra("Nick") ?: "Nick"
+                List1View1(name, nick)
             }
         }
     }
@@ -135,20 +103,65 @@ fun ShowImage(withBuild: Boolean) {
 }
 
 @Composable
-fun ItemsList(items: List<String>, modifier: Modifier = Modifier) {
-    LazyColumn(modifier) {
-        items(items) { item ->
-            Text(
-                text = item,
-                fontSize = 50.sp,
-                modifier = Modifier.fillMaxWidth()
-                    .padding(16.dp)
-            )
-            Divider(
-                color = Color.Black,
-                thickness = 1.dp,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+fun List1View1(name: String, nick: String, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+
+    Column (
+        modifier = Modifier
+            .background(Color.Cyan)
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = name,
+            fontSize = 30.sp,
+            modifier = Modifier
+                .padding(16.dp)
+        )
+        Image(
+            painter = painterResource(id = R.drawable.person_icon),
+            contentDescription = null,
+            modifier = Modifier
+                .size(200.dp)
+                .background(Color.Gray)
+        )
+        Text(
+            text = nick,
+            fontSize = 30.sp,
+            modifier = Modifier
+                .padding(16.dp)
+        )
+        Spacer(modifier = Modifier.height(50.dp))
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Button(
+                onClick = {
+                    Intent(context, List1FormsActivity::class.java).also {
+                        it.putExtra("Name", name)
+                        it.putExtra("Nick", nick)
+                        context.startActivity(it)
+                    }
+                },
+                modifier = Modifier.weight(1f).padding(horizontal = 10.dp)
+            ) {
+                Text("1",
+                    fontSize = 26.sp)
+            }
+            Button(
+                onClick = { /*TODO*/ },
+                modifier = Modifier.weight(1f).padding(horizontal = 10.dp)) {
+                Text("2",
+                    fontSize = 26.sp)
+            }
+            Button(
+                onClick = { /*TODO*/ },
+                modifier = Modifier.weight(1f).padding(horizontal = 10.dp)) {
+                Text("3",
+                    fontSize = 26.sp)
+            }
         }
     }
 }
@@ -157,6 +170,6 @@ fun ItemsList(items: List<String>, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     JetpackComposeAppTheme {
-        //Greeting("Android")
+        List1View1("Name", "Nick")
     }
 }

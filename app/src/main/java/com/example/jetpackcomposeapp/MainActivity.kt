@@ -113,7 +113,11 @@ fun List1View1(name: String, nick: String, modifier: Modifier = Modifier) {
                     fontSize = 26.sp)
             }
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    Intent(context, List1RatingActivity::class.java).also {
+                        context.startActivity(it)
+                    }
+                },
                 modifier = Modifier.weight(1f).padding(horizontal = 10.dp)) {
                 Text("3",
                     fontSize = 26.sp)

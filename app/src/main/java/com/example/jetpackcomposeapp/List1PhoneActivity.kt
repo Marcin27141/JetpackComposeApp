@@ -1,5 +1,7 @@
 package com.example.jetpackcomposeapp
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -56,7 +58,14 @@ class List1PhoneActivity : ComponentActivity() {
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 28.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Button(onClick = { /*TODO*/ }) {
+                        Button(onClick = {
+                            val dialIntent = Intent(Intent.ACTION_DIAL).apply {
+                                data = Uri.parse("tel:$phone")
+                            }
+                            if (intent.resolveActivity(packageManager) != null) {
+                                startActivity(dialIntent)
+                            }
+                        }) {
                             Text("Dial", fontSize = 20.sp)
                         }
                         Spacer(modifier = Modifier.width(16.dp))
@@ -72,7 +81,19 @@ class List1PhoneActivity : ComponentActivity() {
                             modifier = Modifier.weight(1f))
                     }
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            val smsIntent = Intent(Intent.ACTION_SENDTO).apply {
+                                val body = when (radioOption) {
+                                    0, 1, 2 -> radioItems[radioOption]
+                                    else -> customSMS
+                                }
+                                data = Uri.parse("smsto:$phone")
+                                putExtra("sms_body", body)
+                            }
+                            if (intent.resolveActivity(packageManager) != null) {
+                                startActivity(smsIntent)
+                            }
+                        },
                     ) {
                         Text("SMS", fontSize = 20.sp)
                     }

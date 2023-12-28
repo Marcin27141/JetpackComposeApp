@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.sp
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -58,58 +57,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Column (
-        modifier = Modifier
-            .background(Color.Gray)
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Hello $name!",
-            color = Color.Blue,
-            fontSize = 30.sp,
-            modifier = Modifier
-                .padding(16.dp)
-        )
-        Text(
-            text = "Goodbye $name!",
-            color = Color.Blue,
-            fontSize = 30.sp,
-            modifier = Modifier
-                .padding(16.dp)
-        )
-        ShowImage(false)
-    }
-}
-
-@Composable
-fun ShowImage(withBuild: Boolean) {
-    Row (
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = null
-        )
-        if (withBuild) {
-            Icon(imageVector = Icons.Default.Build, contentDescription = null,
-                modifier = Modifier.size(40.dp))
-        }
-
-    }
-
-}
-
-@Composable
 fun List1View1(name: String, nick: String, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     Column (
-        modifier = Modifier
-            .background(Color.Cyan)
-            .fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -139,9 +91,7 @@ fun List1View1(name: String, nick: String, modifier: Modifier = Modifier) {
         ) {
             Button(
                 onClick = {
-                    Intent(context, List1FormsActivity::class.java).also {
-                        it.putExtra("Name", name)
-                        it.putExtra("Nick", nick)
+                    Intent(context, List1PhoneActivity::class.java).also {
                         context.startActivity(it)
                     }
                 },
@@ -151,7 +101,13 @@ fun List1View1(name: String, nick: String, modifier: Modifier = Modifier) {
                     fontSize = 26.sp)
             }
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    Intent(context, List1FormsActivity::class.java).also {
+                        it.putExtra("Name", name)
+                        it.putExtra("Nick", nick)
+                        context.startActivity(it)
+                    }
+                },
                 modifier = Modifier.weight(1f).padding(horizontal = 10.dp)) {
                 Text("2",
                     fontSize = 26.sp)

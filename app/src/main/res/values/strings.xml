@@ -2,5 +2,6 @@
     <string name="app_name">JetpackComposeApp</string>
     <string name="title_activity_list1_form">List1FormActivity</string>
     <string name="title_activity_list1_forms">List1FormsActivity</string>
+    <string name="title_activity_list1_phone">List1PhoneActivity</string>
     <string name="title_activity_list">ListActivity</string>
 </resources>

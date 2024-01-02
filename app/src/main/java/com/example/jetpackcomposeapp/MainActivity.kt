@@ -123,6 +123,16 @@ fun List1View1(name: String, nick: String, modifier: Modifier = Modifier) {
                     fontSize = 26.sp)
             }
         }
+        Button(
+            onClick = {
+                Intent(context, ListActivity::class.java).also {
+                    context.startActivity(it)
+                }
+            },
+            modifier = Modifier.weight(1f).padding(horizontal = 10.dp)) {
+            Text("List 6",
+                fontSize = 26.sp)
+        }
     }
 }
 

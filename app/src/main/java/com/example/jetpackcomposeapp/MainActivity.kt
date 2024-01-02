@@ -129,9 +129,8 @@ fun List1View1(name: String, nick: String, modifier: Modifier = Modifier) {
                     context.startActivity(it)
                 }
             },
-            modifier = Modifier.weight(1f).padding(horizontal = 10.dp)) {
-            Text("List 6",
-                fontSize = 26.sp)
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 8.dp)) {
+            Text("List 6", fontSize = 26.sp)
         }
     }
 }

@@ -1,9 +1,12 @@
 package com.example.jetpackcomposeapp
 
+import android.content.Intent
 import android.os.Bundle
+import android.telecom.Call.Details
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -51,17 +54,9 @@ class ListActivity : ComponentActivity() {
         setContent {
             JetpackComposeAppTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                val animalsList = remember {
-                    AnimalItem.initialAnimals
-                }
-                    Column (horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Animals", fontSize = 42.sp, modifier = Modifier.padding(20.dp))
-                        ItemsList(animalsList)
-                    }
+                Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Animals", fontSize = 42.sp, modifier = Modifier.padding(20.dp))
+                    ItemsList({animal -> startActivity(AnimalDetails.newIntent(applicationContext, animal))})
                 }
             }
         }
@@ -70,25 +65,28 @@ class ListActivity : ComponentActivity() {
 
 
 @Composable
-fun ItemsList(items: List<AnimalItem>, modifier: Modifier = Modifier) {
+fun ItemsList(navigateToProfile: (AnimalItem) -> Unit, modifier: Modifier = Modifier) {
+    val animalsList = remember {
+        AnimalItem.initialAnimals
+    }
     LazyColumn(modifier) {
         items(
-            items = items,
+            items = animalsList,
             itemContent = {
-                AnimalListItem(animal = it)
+                AnimalListItem(animal = it, navigateToProfile)
             })
     }
 }
 
 @Composable
-fun AnimalListItem(animal: AnimalItem) {
+fun AnimalListItem(animal: AnimalItem, navigateToDetails: (AnimalItem) -> Unit) {
     Card(
         modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp).fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         shape = RoundedCornerShape(corner = CornerSize(16.dp))
     ) {
-        Row {
+        Row(Modifier.clickable { navigateToDetails(animal) }) {
             AnimalListImage(animal)
             Column(
                 modifier = Modifier

@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.sp
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
 class List1FormsActivity : ComponentActivity() {
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

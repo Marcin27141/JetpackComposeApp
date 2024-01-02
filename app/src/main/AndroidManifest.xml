@@ -13,6 +13,12 @@
         android:theme="@style/Theme.JetpackComposeApp"
         tools:targetApi="31">
         <activity
+            android:name=".CreateAnimal"
+            android:exported="false"
+            android:label="@string/title_activity_create_animal"
+            android:parentActivityName=".ListActivity"
+            android:theme="@style/Theme.JetpackComposeApp" />
+        <activity
             android:name=".AnimalDetails"
             android:exported="false"
             android:label="@string/title_activity_animal_details"

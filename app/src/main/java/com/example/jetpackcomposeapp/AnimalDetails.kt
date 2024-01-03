@@ -31,16 +31,21 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.jetpackcomposeapp.database.AnimalItem
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 import com.gowtham.ratingbar.RatingBar
 import com.gowtham.ratingbar.RatingBarStyle
 
 class AnimalDetails : ComponentActivity() {
-    private val animal: AnimalItem by lazy {
-        intent?.getSerializableExtra(ANIMAL_ID) as AnimalItem
-    }
+    private lateinit var animal: AnimalItem
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        intent.let {
+            val id = it.getIntExtra(ANIMAL_ID, -1)
+            animal = MyRepository.getInstance(this).getAnimalById(id)!!
+        }
 
         setContent {
             JetpackComposeAppTheme {
@@ -60,7 +65,7 @@ class AnimalDetails : ComponentActivity() {
         private const val ANIMAL_ID = "animalID"
         fun newIntent(context: Context, animal: AnimalItem) =
             Intent(context, AnimalDetails::class.java).apply {
-                putExtra(ANIMAL_ID, animal)
+                putExtra(ANIMAL_ID, animal.id)
             }
     }
 }
@@ -79,7 +84,7 @@ fun ShowDetails(animal: AnimalItem, onBackPressed: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = AnimalItem.getAnimalIconId(animal)),
+                painter = painterResource(id = MyRepository.getAnimalIconId(animal)),
                 contentDescription = "${animal.name} image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

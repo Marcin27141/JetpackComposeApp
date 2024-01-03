@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,11 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
@@ -31,17 +26,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.capitalize
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.jetpackcomposeapp.database.AnimalItem
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 import com.gowtham.ratingbar.RatingBar
 import com.gowtham.ratingbar.RatingBarStyle
@@ -59,7 +48,8 @@ class CreateAnimal : ComponentActivity() {
                 ) {
                     ShowCreate({ onBackPressedDispatcher.onBackPressed()}, {animal ->
                         val intent = Intent(this, ListActivity::class.java)
-                        intent.putExtra("newAnimal", animal)
+                        MyRepository.getInstance(this).addAnimal(animal);
+                        intent.putExtra("newAnimal", animal.id)
                         startActivity(intent)
                     })
                 }
@@ -184,7 +174,7 @@ fun ShowCreate(onBackPressed: () -> Unit, onSave: (AnimalItem) -> Unit) {
         ){
             Button(onClick = {
                 if (name.value.isNotBlank() && latin.value.isNotBlank() && radioOption.value != -1) {
-                    val animal = AnimalItem(name.value, latin.value, radioItems[radioOption.value], health.value, power.value, isDeadly.value)
+                    val animal = AnimalItem(0, name.value, latin.value, radioItems[radioOption.value], health.value, power.value, isDeadly.value)
                     onSave(animal)
                 }
                 else {

@@ -1,5 +1,6 @@
 package com.example.jetpackcomposeapp
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -36,30 +37,45 @@ import com.gowtham.ratingbar.RatingBar
 import com.gowtham.ratingbar.RatingBarStyle
 
 class CreateAnimal : ComponentActivity() {
+    private var animalToUpdate: AnimalItem? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             JetpackComposeAppTheme {
+                intent.let {
+                    val id = it.getIntExtra(ANIMAL_ID, -1)
+                    animalToUpdate = MyRepository.getInstance(this).getAnimalById(id)
+                }
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ShowCreate({ onBackPressedDispatcher.onBackPressed()}, {animal ->
+                    ShowCreate(animalToUpdate, { onBackPressedDispatcher.onBackPressed()}, {animal ->
                         val intent = Intent(this, ListActivity::class.java)
-                        MyRepository.getInstance(this).addAnimal(animal);
-                        intent.putExtra("newAnimal", animal.id)
-                        startActivity(intent)
+                        if (animal.id == 0)
+                            MyRepository.getInstance(this).addAnimal(animal);
+                        else
+                            MyRepository.getInstance(this).updateAnimal(animal.id, animal);
+                        startActivity(AnimalDetails.newIntent(applicationContext, animal))
                     })
                 }
             }
         }
     }
+
+    companion object {
+        private const val ANIMAL_ID = "animalID"
+        fun getIntentForUpdate(context: Context, animal: AnimalItem) =
+            Intent(context, CreateAnimal::class.java).apply {
+                putExtra(ANIMAL_ID, animal.id)
+            }
+    }
 }
 
 @Composable
-fun ShowCreate(onBackPressed: () -> Unit, onSave: (AnimalItem) -> Unit) {
+fun ShowCreate(animal: AnimalItem?, onBackPressed: () -> Unit, onSave: (AnimalItem) -> Unit) {
     val radioItems = listOf(
         AnimalItem.AnimalType.PREDATOR,
         AnimalItem.AnimalType.RODENT,
@@ -67,22 +83,22 @@ fun ShowCreate(onBackPressed: () -> Unit, onSave: (AnimalItem) -> Unit) {
         AnimalItem.AnimalType.BIRD
     )
     var name = remember {
-        mutableStateOf("")
+        mutableStateOf(animal?.name ?: "")
     }
     var latin = remember {
-        mutableStateOf("")
+        mutableStateOf(animal?.latinName ?: "")
     }
     var radioOption = remember {
-        mutableStateOf(-1)
+        mutableStateOf(radioItems.indexOf(animal?.animalType))
     }
     var isDeadly = remember {
-        mutableStateOf(false)
+        mutableStateOf(animal?.isDeadly ?: false)
     }
     var health = remember {
-        mutableStateOf(4)
+        mutableStateOf(animal?.health ?: 4)
     }
     var power = remember {
-        mutableStateOf(3f)
+        mutableStateOf(animal?.strength ?: 3f)
     }
     val context = LocalContext.current
 
@@ -174,8 +190,8 @@ fun ShowCreate(onBackPressed: () -> Unit, onSave: (AnimalItem) -> Unit) {
         ){
             Button(onClick = {
                 if (name.value.isNotBlank() && latin.value.isNotBlank() && radioOption.value != -1) {
-                    val animal = AnimalItem(0, name.value, latin.value, radioItems[radioOption.value], health.value, power.value, isDeadly.value)
-                    onSave(animal)
+                    val newAnimal = AnimalItem(animal?.id ?: 0, name.value, latin.value, radioItems[radioOption.value], health.value, power.value, isDeadly.value)
+                    onSave(newAnimal)
                 }
                 else {
                     Toast.makeText(context, "Please fill necessary info", Toast.LENGTH_SHORT).show()

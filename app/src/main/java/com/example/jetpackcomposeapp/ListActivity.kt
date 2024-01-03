@@ -1,11 +1,13 @@
 package com.example.jetpackcomposeapp
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,7 +28,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,19 +56,22 @@ class ListActivity : ComponentActivity() {
         setContent {
             JetpackComposeAppTheme {
                 // A surface container using the 'background' color from the theme
-                var animalsList = remember {
-                    MyRepository.getInstance(applicationContext).getAnimals()
+                var animalsList by remember {
+                    mutableStateOf(MyRepository.getInstance(applicationContext).getAnimals().toList())
                 }
-//                if (intent != null && intent.hasExtra("newAnimal")) {
-//                    if (!animalsList.any { a -> a.id == intent.getIntExtra("newAnimal", -1) })
-//                        animalsList = MyRepository.getInstance(applicationContext).getAnimals()
-//                }
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ){
                     Column (horizontalAlignment = Alignment.CenterHorizontally) {
                         Text("Animals", fontSize = 42.sp, modifier = Modifier.padding(20.dp))
-                        ItemsList(animalsList, {animal -> startActivity(AnimalDetails.newIntent(applicationContext, animal))})
+                        ItemsList(animalsList,
+                            {animal -> startActivity(AnimalDetails.newIntent(applicationContext, animal))},
+                            {animal ->
+                                run {
+                                    if (MyRepository.getInstance(applicationContext).deleteAnimal(animal))
+                                        animalsList = MyRepository.getInstance(applicationContext).getAnimals()
+                                }
+                            })
                     }
                     FloatingActionButton(onClick = { startActivity(Intent(applicationContext, CreateAnimal::class.java))},
                         modifier = Modifier.align(Alignment.BottomEnd).padding(40.dp)) {
@@ -95,18 +103,24 @@ fun some() {
 
 
 @Composable
-fun ItemsList(animals: MutableList<AnimalItem>, navigateToProfile: (AnimalItem) -> Unit, modifier: Modifier = Modifier) {
-    LazyColumn(modifier) {
+fun ItemsList(animals: List<AnimalItem>,
+              navigateToProfile: (AnimalItem) -> Unit,
+              tryDeleteAnimal: (AnimalItem) -> Unit) {
+    LazyColumn {
         items(
             items = animals,
             itemContent = {
-                AnimalListItem(animal = it, navigateToProfile)
+                AnimalListItem(animal = it, navigateToProfile, tryDeleteAnimal)
             })
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AnimalListItem(animal: AnimalItem, navigateToDetails: (AnimalItem) -> Unit) {
+fun AnimalListItem(animal: AnimalItem,
+                   navigateToDetails: (AnimalItem) -> Unit,
+                   tryDeleteAnimal: (AnimalItem) -> Unit) {
+    val context = LocalContext.current
     Card(
         modifier = Modifier
             .padding(horizontal = 8.dp, vertical = 8.dp)
@@ -115,7 +129,22 @@ fun AnimalListItem(animal: AnimalItem, navigateToDetails: (AnimalItem) -> Unit) 
         colors = CardDefaults.cardColors(containerColor = Color.White),
         shape = RoundedCornerShape(corner = CornerSize(16.dp))
     ) {
-        Row(Modifier.clickable { navigateToDetails(animal) }) {
+        Row(Modifier.combinedClickable(
+            onClick = { navigateToDetails(animal) },
+            onLongClick = {
+                val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+                builder
+                    .setTitle("Are you sure?")
+                    .setMessage("You are going to delete " + animal.name + ". Do you want to continue?")
+                    .setPositiveButton("Yes") { _, _ ->
+                        tryDeleteAnimal(animal)
+                    }
+                    .setNegativeButton("No") { dialog, _ ->
+                        dialog.cancel()
+                    }
+                builder.create().show()
+            }
+        )) {
             AnimalListImage(animal)
             Column(
                 modifier = Modifier

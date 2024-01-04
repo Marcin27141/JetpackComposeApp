@@ -1,7 +1,11 @@
 package com.example.jetpackcomposeapp
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.activity.ComponentActivity
@@ -41,9 +45,39 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
 class MainActivity : ComponentActivity() {
+    private val REQUEST_CODE = 313
+    private val REQUIRED_PERMISSIONS = mutableListOf(
+        //Manifest.permission.CAMERA,
+        //Manifest.permission.RECORD_AUDIO,
+        Manifest.permission.READ_EXTERNAL_STORAGE)
+        .apply {
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+                add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
+        }.toTypedArray()
+
+    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
+        ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CODE) {
+            if (!allPermissionsGranted()) {
+                Toast.makeText(this, "Permissions not granted.", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -53,6 +87,8 @@ class MainActivity : ComponentActivity() {
                 List1View1(name, nick)
             }
         }
+        if (!allPermissionsGranted())
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE)
     }
 }
 
@@ -125,7 +161,10 @@ fun List1View1(name: String, nick: String, modifier: Modifier = Modifier) {
         }
         Button(
             onClick = {
-                Intent(context, ListActivity::class.java).also {
+//                Intent(context, ListActivity::class.java).also {
+//                    context.startActivity(it)
+//                }
+                Intent(context, SetImageActivity::class.java).also {
                     context.startActivity(it)
                 }
             },

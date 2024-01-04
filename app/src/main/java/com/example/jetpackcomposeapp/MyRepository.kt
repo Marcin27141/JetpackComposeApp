@@ -27,6 +27,10 @@ class MyRepository(context: Context) {
         return myDao.insert(animal)>= 0
     }
 
+    fun addAnimalWithId(animal: AnimalItem) : Long {
+        return myDao.insert(animal)
+    }
+
     fun deleteAnimal(animal: AnimalItem) : Boolean {
         return myDao.delete(animal) > 0
     }

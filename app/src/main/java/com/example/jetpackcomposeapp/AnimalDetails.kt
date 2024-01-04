@@ -56,8 +56,7 @@ class AnimalDetails : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
-                    ShowDetails(animal) { onBackPressedDispatcher.onBackPressed() }
+                    ShowDetails(animal) { startActivity(Intent(applicationContext, ListActivity::class.java)) }
                 }
             }
         }

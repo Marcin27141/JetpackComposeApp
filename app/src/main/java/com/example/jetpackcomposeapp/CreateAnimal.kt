@@ -53,9 +53,9 @@ class CreateAnimal : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     ShowCreate(animalToUpdate, { onBackPressedDispatcher.onBackPressed()}, {animal ->
-                        val intent = Intent(this, ListActivity::class.java)
-                        if (animal.id == 0)
-                            MyRepository.getInstance(this).addAnimal(animal);
+                        if (animal.id == 0) {
+                            animal.id = MyRepository.getInstance(this).addAnimalWithId(animal).toInt();
+                        }
                         else
                             MyRepository.getInstance(this).updateAnimal(animal.id, animal);
                         startActivity(AnimalDetails.newIntent(applicationContext, animal))

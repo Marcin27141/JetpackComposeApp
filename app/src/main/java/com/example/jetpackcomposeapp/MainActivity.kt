@@ -3,6 +3,7 @@ package com.example.jetpackcomposeapp
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -84,7 +85,15 @@ class MainActivity : ComponentActivity() {
             JetpackComposeAppTheme {
                 val name = intent?.getStringExtra("Name") ?: "Name"
                 val nick = intent?.getStringExtra("Nick") ?: "Nick"
-                List1View1(name, nick)
+                val preferencesManager = PreferencesManager.getInstance()
+                val imageUri = preferencesManager.getHomeImageUri(this)
+
+//                if (imageUri != null) {
+//                    iconView.setImageBitmap(ImageRepo.getInstance(requireContext()).getFileBitmap(imageUri, 150, 150))
+//                } else {
+//                    iconView.setImageResource(initialIcon)
+//                }
+                List1View1(name, nick, imageUri)
             }
         }
         if (!allPermissionsGranted())
@@ -93,7 +102,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun List1View1(name: String, nick: String, modifier: Modifier = Modifier) {
+fun List1View1(name: String, nick: String, imageUri: Uri?, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     Column (
@@ -107,13 +116,17 @@ fun List1View1(name: String, nick: String, modifier: Modifier = Modifier) {
             modifier = Modifier
                 .padding(16.dp)
         )
-        Image(
-            painter = painterResource(id = R.drawable.person_icon),
-            contentDescription = null,
-            modifier = Modifier
-                .size(200.dp)
-                .background(Color.Gray)
-        )
+        if (imageUri != null)
+            ImageFromUri(imageUri, Modifier.size(200.dp))
+        else {
+            Image(
+                painter = painterResource(id = R.drawable.person_icon),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(200.dp)
+                    .background(Color.Gray)
+            )
+        }
         Text(
             text = nick,
             fontSize = 30.sp,
@@ -178,6 +191,5 @@ fun List1View1(name: String, nick: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     JetpackComposeAppTheme {
-        List1View1("Name", "Nick")
     }
 }

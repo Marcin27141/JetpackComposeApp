@@ -8,6 +8,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,11 +20,13 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
@@ -35,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
 class PhotosListActivity : ComponentActivity() {
@@ -47,7 +51,14 @@ class PhotosListActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ShowImagesGrid()
+                    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+                        ShowImagesGrid(Modifier.weight(1f))
+                        Button(onClick = {}, modifier = Modifier.padding(16.dp))
+                        {
+                            Text("Add photo", fontSize = 24.sp, modifier = Modifier.padding(horizontal = 10.dp))
+                        }
+                    }
+
                 }
             }
         }
@@ -55,10 +66,10 @@ class PhotosListActivity : ComponentActivity() {
 }
 
 @Composable
-fun ShowImagesGrid() {
+fun ShowImagesGrid(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val images = ImageRepo.getInstance(context).getSharedList() ?: mutableListOf()
-    LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.fillMaxSize(),
+    LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = modifier,
         contentPadding = PaddingValues(
             start = 12.dp,
             top = 16.dp,
@@ -78,8 +89,8 @@ fun ShowImagesGrid() {
                             }
                         })
             }
-        })
-
+        }
+    )
 }
 
 

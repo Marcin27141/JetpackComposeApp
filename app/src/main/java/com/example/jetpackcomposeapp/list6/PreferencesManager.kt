@@ -1,6 +1,5 @@
-package com.example.jetpackcomposeapp
+package com.example.jetpackcomposeapp.list6
 
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri

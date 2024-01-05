@@ -18,49 +18,49 @@
         android:theme="@style/Theme.JetpackComposeApp"
         tools:targetApi="31">
         <activity
-            android:name=".PhotosListActivity"
+            android:name=".list6.PhotosListActivity"
             android:exported="false"
             android:label="@string/title_activity_photos_list"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.JetpackComposeApp" />
         <activity
-            android:name=".SetImageActivity"
+            android:name=".list6.SetImageActivity"
             android:exported="false"
             android:label="@string/title_activity_set_image"
-            android:parentActivityName=".PhotosListActivity"
+            android:parentActivityName=".list6.PhotosListActivity"
             android:theme="@style/Theme.JetpackComposeApp" />
         <activity
-            android:name=".CreateAnimal"
+            android:name=".list6.CreateAnimal"
             android:exported="false"
             android:label="@string/title_activity_create_animal"
-            android:parentActivityName=".ListActivity"
+            android:parentActivityName=".list6.ListActivity"
             android:theme="@style/Theme.JetpackComposeApp" />
         <activity
-            android:name=".AnimalDetails"
+            android:name=".list6.AnimalDetails"
             android:exported="false"
             android:label="@string/title_activity_animal_details"
-            android:parentActivityName=".ListActivity"
+            android:parentActivityName=".list6.ListActivity"
             android:theme="@style/Theme.JetpackComposeApp" />
         <activity
-            android:name=".List1RatingActivity"
+            android:name=".list1.List1RatingActivity"
             android:exported="false"
             android:label="@string/title_activity_list1_rating"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.JetpackComposeApp" />
         <activity
-            android:name=".ListActivity"
+            android:name=".list6.ListActivity"
             android:exported="false"
             android:label="@string/title_activity_list"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.JetpackComposeApp" />
         <activity
-            android:name=".List1FormsActivity"
+            android:name=".list1.List1FormsActivity"
             android:exported="false"
             android:label="@string/title_activity_list1_forms"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.JetpackComposeApp" />
         <activity
-            android:name=".List1PhoneActivity"
+            android:name=".list1.List1PhoneActivity"
             android:exported="false"
             android:label="@string/title_activity_list1_phone"
             android:parentActivityName=".MainActivity"

@@ -1,47 +1,42 @@
-package com.example.jetpackcomposeapp
+package com.example.jetpackcomposeapp.list6
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.jetpackcomposeapp.R
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
 class PhotosListActivity : ComponentActivity() {
+    enum class AppScreens {
+        PhotosGrid,
+        PhotosSwipe,
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -51,22 +46,44 @@ class PhotosListActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                        ShowImagesGrid(Modifier.weight(1f))
-                        Button(onClick = {}, modifier = Modifier.padding(16.dp))
-                        {
-                            Text("Add photo", fontSize = 24.sp, modifier = Modifier.padding(horizontal = 10.dp))
+                    val navController = rememberNavController()
+                    NavHost(navController, startDestination = AppScreens.PhotosGrid.name) {
+                        composable(AppScreens.PhotosGrid.name) {
+                            ShowGridActivity { page ->
+                                navController.navigate(
+                                    "${AppScreens.PhotosSwipe.name}/{startPage}"
+                                        .replace(
+                                            oldValue = "{startPage}",
+                                            newValue = "$page"
+                                        )
+                                )
+                            }
                         }
-                    }
-
-                }
+                        composable("${AppScreens.PhotosSwipe.name}/{startPage}") { navBackStackEntry ->
+                            val startPage = navBackStackEntry.arguments?.getString("startPage")
+                            startPage?.let {
+                                ShowSwipeImages(it.toInt())
+                            }
+                        }
+                }}
             }
         }
     }
 }
 
 @Composable
-fun ShowImagesGrid(modifier: Modifier = Modifier) {
+fun ShowGridActivity(onNavigateToSwipe: (Int) -> Unit) {
+    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        ShowImagesGrid(onNavigateToSwipe, Modifier.weight(1f))
+        Button(onClick = {}, modifier = Modifier.padding(16.dp))
+        {
+            Text("Add photo", fontSize = 24.sp, modifier = Modifier.padding(horizontal = 10.dp))
+        }
+    }
+}
+
+@Composable
+fun ShowImagesGrid(onNavigateToSwipe: (Int) -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val images = ImageRepo.getInstance(context).getSharedList() ?: mutableListOf()
     LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = modifier,
@@ -83,10 +100,7 @@ fun ShowImagesGrid(modifier: Modifier = Modifier) {
                         .fillMaxWidth()
                         .padding(16.dp)
                         .clickable {
-                            Intent(context, SetImageActivity::class.java).also {
-                                it.putExtra("StartPage", index)
-                                context.startActivity(it)
-                            }
+                            onNavigateToSwipe(index)
                         })
             }
         }
@@ -110,18 +124,6 @@ fun GreetingPreview5() {
             ),
             content = {
                 items(images.size) { index ->
-                    //ImageFromFile(file = images[index], Modifier.size(100.dp))
-//                    Card(
-//                        modifier = Modifier.padding(16.dp)
-//                    ) {
-//                        Text(
-//                            text = images[index],
-//                            fontWeight = FontWeight.Bold,
-//                            color = Color(0xFFFFFFFF),
-//                            textAlign = TextAlign.Center,
-//                            modifier = Modifier.padding(16.dp)
-//                        )
-//                    }
                     Image(painter = painterResource(id = R.drawable.bird_icon), null,
                         modifier = Modifier.size(100.dp))
                 }

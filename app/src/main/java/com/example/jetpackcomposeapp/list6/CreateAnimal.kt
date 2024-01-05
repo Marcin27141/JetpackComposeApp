@@ -1,4 +1,4 @@
-package com.example.jetpackcomposeapp
+package com.example.jetpackcomposeapp.list6
 
 import android.content.Context
 import android.content.Intent

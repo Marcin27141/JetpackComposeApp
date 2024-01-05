@@ -1,4 +1,4 @@
-package com.example.jetpackcomposeapp
+package com.example.jetpackcomposeapp.list6
 
 import android.content.ContentResolver
 import android.content.ContentUris
@@ -117,7 +117,7 @@ class ImageRepo {
                 INSTANCE = ImageRepo()
                 sharedStoreList = mutableListOf()
                 appStoreList = mutableListOf()
-                this.ctx = ctx
+                Companion.ctx = ctx
             }
             return INSTANCE as ImageRepo
         }

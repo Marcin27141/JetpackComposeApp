@@ -1,7 +1,8 @@
-package com.example.jetpackcomposeapp
+package com.example.jetpackcomposeapp.list6
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import com.example.jetpackcomposeapp.R
 import com.example.jetpackcomposeapp.database.AnimalItem
 import com.example.jetpackcomposeapp.database.MyDB
 import com.example.jetpackcomposeapp.database.MyDao

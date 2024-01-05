@@ -1,4 +1,4 @@
-package com.example.jetpackcomposeapp
+package com.example.jetpackcomposeapp.list6
 
 import android.app.AlertDialog
 import android.content.Intent
@@ -43,19 +43,23 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.jetpackcomposeapp.MainActivity
 import com.example.jetpackcomposeapp.database.AnimalItem
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
 class ListActivity : ComponentActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
-
 
         setContent {
             JetpackComposeAppTheme {
                 // A surface container using the 'background' color from the theme
+
                 var animalsList by remember {
                     mutableStateOf(MyRepository.getInstance(applicationContext).getAnimals().toList())
                 }

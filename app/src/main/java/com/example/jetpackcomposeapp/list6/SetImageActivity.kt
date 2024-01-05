@@ -1,4 +1,4 @@
-package com.example.jetpackcomposeapp
+package com.example.jetpackcomposeapp.list6
 
 import android.content.Intent
 import android.net.Uri
@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.jetpackcomposeapp.MainActivity
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
 class SetImageActivity : ComponentActivity() {
@@ -66,10 +67,9 @@ fun ImageFromUri(uri: Uri, modifier: Modifier = Modifier) {
 fun ShowSwipeImages(startPage: Int = 0) {
     val context = LocalContext.current
     val images = ImageRepo.getInstance(context).getSharedList() ?: mutableListOf()
-    val pagerState = rememberPagerState(initialPage = startPage)
+    val pagerState = rememberPagerState(initialPage = startPage, pageCount = { images.size })
     Box(modifier = Modifier.fillMaxSize()) {
         HorizontalPager(
-            pageCount = images.size,
             state = pagerState
             ) { index ->
             ImageFromFile(images[index],
@@ -78,7 +78,8 @@ fun ShowSwipeImages(startPage: Int = 0) {
                     .padding(start = 20.dp, end = 20.dp, bottom = 100.dp, top = 30.dp))
         }
         Button(onClick = {
-            PreferencesManager.getInstance().setHomeImage(images[pagerState.currentPage].contentUri!!, context)
+            PreferencesManager.getInstance()
+                .setHomeImage(images[pagerState.currentPage].contentUri!!, context)
             Intent(context, MainActivity::class.java).also {
                 context.startActivity(it)
             }

@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.example.jetpackcomposeapp.MyRepository
+import com.example.jetpackcomposeapp.list6.MyRepository
 import kotlinx.coroutines.flow.Flow
 
 class MyViewModel(context: Context) : ViewModel() {

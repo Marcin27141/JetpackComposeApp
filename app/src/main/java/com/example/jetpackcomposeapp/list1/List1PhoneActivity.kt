@@ -1,4 +1,4 @@
-package com.example.jetpackcomposeapp
+package com.example.jetpackcomposeapp.list1
 
 import android.content.Intent
 import android.net.Uri

@@ -164,7 +164,7 @@ fun List1View1(name: String, nick: String, modifier: Modifier = Modifier) {
 //                Intent(context, ListActivity::class.java).also {
 //                    context.startActivity(it)
 //                }
-                Intent(context, SetImageActivity::class.java).also {
+                Intent(context, PhotosListActivity::class.java).also {
                     context.startActivity(it)
                 }
             },

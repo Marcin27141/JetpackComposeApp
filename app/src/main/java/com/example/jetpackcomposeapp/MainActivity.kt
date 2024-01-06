@@ -32,8 +32,7 @@ import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 class MainActivity : ComponentActivity() {
     private val REQUEST_CODE = 313
     private val REQUIRED_PERMISSIONS = mutableListOf(
-        //Manifest.permission.CAMERA,
-        //Manifest.permission.RECORD_AUDIO,
+        Manifest.permission.CAMERA,
         Manifest.permission.READ_EXTERNAL_STORAGE)
         .apply {
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {

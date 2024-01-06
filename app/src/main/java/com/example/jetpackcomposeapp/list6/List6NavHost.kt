@@ -1,9 +1,6 @@
 package com.example.jetpackcomposeapp.list6
 
 import android.net.Uri
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,8 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -36,24 +30,7 @@ import androidx.navigation.navArgument
 import com.example.jetpackcomposeapp.R
 import com.example.jetpackcomposeapp.services.MyRepository
 import com.example.jetpackcomposeapp.services.PreferencesManager
-import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
-class List6NavHost : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            JetpackComposeAppTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    
-                }
-            }
-        }
-    }
-}
 
 enum class AppScreens {
     List6Home,
@@ -63,6 +40,12 @@ enum class AppScreens {
     AnimalForm,
     AnimalDetails
 }
+
+private class List6HomeInfo(
+    val name: String,
+    val nick: String,
+    val imageUri: Uri?
+)
 
 @Composable
 fun ShowList6NavHost() {
@@ -79,7 +62,7 @@ fun ShowList6NavHost() {
             val homeInfo = List6HomeInfo(name, nick, imageUri)
             List6Home(homeInfo, navController)
         }
-        composable(AppScreens.AnimalsList.name) { ShowAnimalsListView(navController) }
+        composable(AppScreens.AnimalsList.name) { ShowAnimalsList(navController) }
         composable("${AppScreens.AnimalDetails.name}/{id}") {
             val animalId = it.arguments?.getString("id")
             val animal = MyRepository.getInstance(context).getAnimalById(animalId!!.toInt())
@@ -94,7 +77,7 @@ fun ShowList6NavHost() {
             ShowCreate(animal, navController)
         }
         composable(AppScreens.PhotosGrid.name) {
-            ShowGridActivity { page -> navController.navigate("${AppScreens.PhotosSwipe.name}/${page}") }
+            ShowPhotosGrid { page -> navController.navigate("${AppScreens.PhotosSwipe.name}/${page}") }
         }
         composable("${AppScreens.PhotosSwipe.name}/{startPage}") { navBackStackEntry ->
             val startPage = navBackStackEntry.arguments?.getString("startPage")
@@ -105,14 +88,9 @@ fun ShowList6NavHost() {
     }
 }
 
-class List6HomeInfo(
-    val name: String,
-    val nick: String,
-    val imageUri: Uri?
-)
 
 @Composable
-fun List6Home(homeInfo: List6HomeInfo, navController: NavController) {
+private fun List6Home(homeInfo: List6HomeInfo, navController: NavController) {
     Column (
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,

@@ -1,10 +1,6 @@
 package com.example.jetpackcomposeapp.list6
 
 import android.app.AlertDialog
-import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
@@ -45,26 +41,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.jetpackcomposeapp.database.AnimalItem
 import com.example.jetpackcomposeapp.services.MyRepository
-import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
-class ListActivity : ComponentActivity() {
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContent {
-            JetpackComposeAppTheme {
-                // A surface container using the 'background' color from the theme
-
-
-            }
-        }
-    }
-}
 
 @Composable
-fun ShowAnimalsListView(navController: NavController) {
+fun ShowAnimalsList(navController: NavController) {
     val context = LocalContext.current
     var animalsList by remember {
         mutableStateOf(MyRepository.getInstance(context).getAnimals().toList())

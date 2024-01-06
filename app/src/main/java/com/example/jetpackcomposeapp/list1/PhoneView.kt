@@ -2,9 +2,6 @@ package com.example.jetpackcomposeapp.list1
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,21 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
-class List1PhoneActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            JetpackComposeAppTheme {
-
-            }
-        }
-    }
-}
 
 @Composable
 fun ShowPhoneView() {
@@ -74,9 +59,7 @@ fun ShowPhoneView() {
                 val dialIntent = Intent(Intent.ACTION_DIAL).apply {
                     data = Uri.parse("tel:$phone")
                 }
-                if (dialIntent.resolveActivity(context.packageManager) != null) {
-                    context.startActivity(dialIntent)
-                }
+                context.startActivity(dialIntent)
             }) {
                 Text("Dial", fontSize = 20.sp)
             }
@@ -103,9 +86,7 @@ fun ShowPhoneView() {
                     data = Uri.parse("smsto:$phone")
                     putExtra("sms_body", body)
                 }
-                if (smsIntent.resolveActivity(context.packageManager) != null) {
-                    context.startActivity(smsIntent)
-                }
+                context.startActivity(smsIntent)
             },
         ) {
             Text("SMS", fontSize = 20.sp)

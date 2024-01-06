@@ -1,11 +1,6 @@
 package com.example.jetpackcomposeapp.list1
 
-import android.content.Context
-import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,8 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -36,46 +28,23 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.jetpackcomposeapp.R
 import com.example.jetpackcomposeapp.list6.ImageFromUri
-import com.example.jetpackcomposeapp.list6.PhotosListActivity
-import com.example.jetpackcomposeapp.list6.ShowGridActivity
-import com.example.jetpackcomposeapp.list6.ShowSwipeImages
 import com.example.jetpackcomposeapp.services.PreferencesManager
-import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
-class List1NavHost : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            JetpackComposeAppTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-
-                }
-            }
-        }
-    }
-}
-
-private enum class AppScreens {
+enum class AppScreens {
     List1Home,
     PhoneView,
     FormsView,
     RatingView
 }
 
-class HomeInfo(
+private class HomeInfo(
     val name: String,
     val nick: String,
     val imageUri: Uri?
 )
 
-
-
 @Composable
-fun ShowList1NavHost() {
+fun List1NavHost() {
     val context = LocalContext.current
     val navController = rememberNavController()
     val defaultName = "Marcin Tkocz"
@@ -87,21 +56,21 @@ fun ShowList1NavHost() {
             val (name, nick) = preferencesManager.getNameAndNick(context, defaultName, defaultNick)
             val imageUri = preferencesManager.getHomeImageUri(context)
             val homeInfo = HomeInfo(name, nick, imageUri)
-            List1Home(homeInfo, navController)
+            ShowList1Home(homeInfo, navController)
         }
         composable(AppScreens.PhoneView.name) { ShowPhoneView() }
         composable(AppScreens.RatingView.name) {
-            ShowRatingView { navController.navigate(AppScreens.List1Home.name) }
+            ShowRatingView { navController.popBackStack(AppScreens.List1Home.name, false) }
         }
         composable(AppScreens.FormsView.name) {
             val (name, nick) = PreferencesManager.getInstance().getNameAndNick(context, defaultName, defaultNick)
-            ShowFormsView(name = name, nick = nick) { navController.navigate(AppScreens.List1Home.name) }
+            ShowFormsView(name, nick) { navController.popBackStack(AppScreens.List1Home.name, false) }
         }
     }
 }
 
 @Composable
-fun List1Home(homeInfo: HomeInfo, navController: NavController) {
+private fun ShowList1Home(homeInfo: HomeInfo, navController: NavController) {
     Column (
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,

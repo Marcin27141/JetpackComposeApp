@@ -1,6 +1,5 @@
 package com.example.jetpackcomposeapp.list6
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -30,6 +29,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.jetpackcomposeapp.R
+import com.example.jetpackcomposeapp.services.ImageRepo
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
 class PhotosListActivity : ComponentActivity() {
@@ -46,26 +46,32 @@ class PhotosListActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navController = rememberNavController()
-                    NavHost(navController, startDestination = AppScreens.PhotosGrid.name) {
-                        composable(AppScreens.PhotosGrid.name) {
-                            ShowGridActivity { page ->
-                                navController.navigate(
-                                    "${AppScreens.PhotosSwipe.name}/{startPage}"
-                                        .replace(
-                                            oldValue = "{startPage}",
-                                            newValue = "$page"
-                                        )
-                                )
-                            }
-                        }
-                        composable("${AppScreens.PhotosSwipe.name}/{startPage}") { navBackStackEntry ->
-                            val startPage = navBackStackEntry.arguments?.getString("startPage")
-                            startPage?.let {
-                                ShowSwipeImages(it.toInt())
-                            }
-                        }
-                }}
+                    List6NavHost()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun List6NavHost() {
+    val navController = rememberNavController()
+    NavHost(navController, startDestination = PhotosListActivity.AppScreens.PhotosGrid.name) {
+        composable(PhotosListActivity.AppScreens.PhotosGrid.name) {
+            ShowGridActivity { page ->
+                navController.navigate(
+                    "${PhotosListActivity.AppScreens.PhotosSwipe.name}/{startPage}"
+                        .replace(
+                            oldValue = "{startPage}",
+                            newValue = "$page"
+                        )
+                )
+            }
+        }
+        composable("${PhotosListActivity.AppScreens.PhotosSwipe.name}/{startPage}") { navBackStackEntry ->
+            val startPage = navBackStackEntry.arguments?.getString("startPage")
+            startPage?.let {
+                ShowSwipeImages(it.toInt())
             }
         }
     }

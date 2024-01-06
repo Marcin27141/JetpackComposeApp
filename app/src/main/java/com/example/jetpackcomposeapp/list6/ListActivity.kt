@@ -40,14 +40,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.jetpackcomposeapp.MainActivity
 import com.example.jetpackcomposeapp.database.AnimalItem
+import com.example.jetpackcomposeapp.services.MyRepository
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
 class ListActivity : ComponentActivity() {
@@ -86,25 +82,6 @@ class ListActivity : ComponentActivity() {
         }
     }
 }
-
-@Preview
-@Composable
-fun some() {
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ){
-        Column (horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()) {
-            Text("Animals", fontSize = 42.sp, modifier = Modifier.padding(20.dp))
-        }
-        FloatingActionButton(onClick = { /*TODO*/ },
-            modifier = Modifier.align(Alignment.BottomEnd).padding(40.dp)) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = null)
-        }
-    }
-
-}
-
 
 @Composable
 fun ItemsList(animals: List<AnimalItem>,

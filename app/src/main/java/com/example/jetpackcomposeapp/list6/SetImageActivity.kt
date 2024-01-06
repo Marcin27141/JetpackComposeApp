@@ -29,6 +29,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.jetpackcomposeapp.MainActivity
+import com.example.jetpackcomposeapp.services.FileItem
+import com.example.jetpackcomposeapp.services.ImageRepo
+import com.example.jetpackcomposeapp.services.PreferencesManager
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
 class SetImageActivity : ComponentActivity() {

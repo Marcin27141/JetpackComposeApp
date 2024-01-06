@@ -1,5 +1,6 @@
-package com.example.jetpackcomposeapp.list6
+package com.example.jetpackcomposeapp.services
 
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
@@ -13,6 +14,19 @@ class PreferencesManager {
                 INSTANCE = PreferencesManager()
             return INSTANCE as PreferencesManager
         }
+    }
+
+    fun getNameAndNick(context: Context) : Pair<String?, String?> {
+        val data: SharedPreferences = context.getSharedPreferences(DEFAULT_PREFS_NAME, Context.MODE_PRIVATE)
+        return Pair(data.getString("name", ""), data.getString("nick", ""));
+    }
+
+    fun setNameAndNick(name: String, nick: String, context: Context) {
+        val data: SharedPreferences = context.getSharedPreferences(DEFAULT_PREFS_NAME, Context.MODE_PRIVATE)
+        val editor = data.edit()
+        editor.putString("name", name)
+        editor.putString("nick", nick)
+        editor.apply()
     }
     fun setHomeImage(imageUri: Uri, context: Context) {
         val data: SharedPreferences = context.getSharedPreferences(DEFAULT_PREFS_NAME, Context.MODE_PRIVATE)

@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,153 +36,103 @@ class List1PhoneActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             JetpackComposeAppTheme {
-                val radioItems = listOf(
-                    "Zaraz oddzwonie",
-                    "Nie moge rozmawiac",
-                    "Jade do domu",
-                    "Wiadomosc ponizej"
-                )
-                var phone by remember {
-                    mutableStateOf("")
-                }
-                var radioOption by remember {
-                    mutableStateOf(-1)
-                }
-                var customSMS by remember {
-                    mutableStateOf("")
-                }
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(top = 50.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 28.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Button(onClick = {
-                            val dialIntent = Intent(Intent.ACTION_DIAL).apply {
-                                data = Uri.parse("tel:$phone")
-                            }
-                            if (intent.resolveActivity(packageManager) != null) {
-                                startActivity(dialIntent)
-                            }
-                        }) {
-                            Text("Dial", fontSize = 20.sp)
-                        }
-                        Spacer(modifier = Modifier.width(16.dp))
-                        OutlinedTextField(
-                            value = phone,
-                            onValueChange = { text ->
-                                phone = text
-                            },
-                            label = { Text("Phone number") },
-                            keyboardOptions = KeyboardOptions.Default.copy(
-                                keyboardType = KeyboardType.Number
-                            ),
-                            modifier = Modifier.weight(1f))
-                    }
-                    Button(
-                        onClick = {
-                            val smsIntent = Intent(Intent.ACTION_SENDTO).apply {
-                                val body = when (radioOption) {
-                                    0, 1, 2 -> radioItems[radioOption]
-                                    else -> customSMS
-                                }
-                                data = Uri.parse("smsto:$phone")
-                                putExtra("sms_body", body)
-                            }
-                            if (intent.resolveActivity(packageManager) != null) {
-                                startActivity(smsIntent)
-                            }
-                        },
-                    ) {
-                        Text("SMS", fontSize = 20.sp)
-                    }
-                    Column (
-                        modifier = Modifier.padding(vertical = 16.dp)
-                    ) {
-                        for (i in 0..3) {
-                            Row (
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                RadioButton(
-                                    selected = radioOption == i,
-                                    onClick = { radioOption = i },
-                                    enabled = true
-                                )
-                                Text(radioItems[i], fontSize = 24.sp)
-                            }
-                        }
-                    }
-                    OutlinedTextField(
-                        value = customSMS,
-                        onValueChange = { text ->
-                            customSMS = text
-                        },
-                        label = { Text("Your custom message") },
-                        modifier = Modifier.fillMaxWidth().padding(10.dp))
-                }
+
             }
         }
     }
+}
 
-    @Preview
-    @Composable
-    fun Preview() {
-        val radioItems = listOf(
-            "Zaraz oddzwonie",
-            "Nie moge rozmawiac",
-            "Jade do domu",
-            "Wiadomosc ponizej"
-        )
-        var phone = ""
-        var radioOption = -1
-        var customSMS = ""
-        Column(
-            modifier = Modifier.fillMaxSize().padding(top = 50.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+@Composable
+fun ShowPhoneView() {
+    val context = LocalContext.current
+
+    val radioItems = listOf(
+        "Zaraz oddzwonie",
+        "Nie moge rozmawiac",
+        "Jade do domu",
+        "Wiadomosc ponizej"
+    )
+    var phone by remember {
+        mutableStateOf("")
+    }
+    var radioOption by remember {
+        mutableStateOf(-1)
+    }
+    var customSMS by remember {
+        mutableStateOf("")
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize().padding(top = 50.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 28.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 28.dp)
-            ) {
-                Button(onClick = { /*TODO*/ }) {
-                    Text("Dial", fontSize = 20.sp)
+            Button(onClick = {
+                val dialIntent = Intent(Intent.ACTION_DIAL).apply {
+                    data = Uri.parse("tel:$phone")
                 }
-                Spacer(modifier = Modifier.width(16.dp))
-                OutlinedTextField(
-                    value = phone,
-                    onValueChange = { text ->
-                        phone = text
-                    },
-                    modifier = Modifier.weight(1f))
-            }
-            Button(
-                onClick = { /*TODO*/ },
-                ) {
-                Text("SMS", fontSize = 20.sp)
-            }
-            Column (
-                modifier = Modifier.padding(vertical = 16.dp)
-            ) {
-                for (i in 0..3) {
-                    Row (
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = radioOption == i,
-                            onClick = { radioOption = i },
-                            enabled = true
-                        )
-                        Text(radioItems[i], fontSize = 24.sp)
-                    }
+                if (dialIntent.resolveActivity(context.packageManager) != null) {
+                    context.startActivity(dialIntent)
                 }
+            }) {
+                Text("Dial", fontSize = 20.sp)
             }
+            Spacer(modifier = Modifier.width(16.dp))
             OutlinedTextField(
-                value = customSMS,
+                value = phone,
                 onValueChange = { text ->
-                    customSMS = text
+                    phone = text
                 },
-                modifier = Modifier.fillMaxWidth().padding(10.dp))
+                label = { Text("Phone number") },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number
+                ),
+                modifier = Modifier.weight(1f)
+            )
         }
+        Button(
+            onClick = {
+                val smsIntent = Intent(Intent.ACTION_SENDTO).apply {
+                    val body = when (radioOption) {
+                        0, 1, 2 -> radioItems[radioOption]
+                        else -> customSMS
+                    }
+                    data = Uri.parse("smsto:$phone")
+                    putExtra("sms_body", body)
+                }
+                if (smsIntent.resolveActivity(context.packageManager) != null) {
+                    context.startActivity(smsIntent)
+                }
+            },
+        ) {
+            Text("SMS", fontSize = 20.sp)
+        }
+        Column(
+            modifier = Modifier.padding(vertical = 16.dp)
+        ) {
+            for (i in 0..3) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = radioOption == i,
+                        onClick = { radioOption = i },
+                        enabled = true
+                    )
+                    Text(radioItems[i], fontSize = 24.sp)
+                }
+            }
+        }
+        OutlinedTextField(
+            value = customSMS,
+            onValueChange = { text ->
+                customSMS = text
+            },
+            label = { Text("Your custom message") },
+            modifier = Modifier.fillMaxWidth().padding(10.dp)
+        )
     }
 }

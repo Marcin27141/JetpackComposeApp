@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.jetpackcomposeapp.MainActivity
+import com.example.jetpackcomposeapp.services.PreferencesManager
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
 class List1FormsActivity : ComponentActivity() {
@@ -40,196 +41,105 @@ class List1FormsActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             JetpackComposeAppTheme {
-                val context = LocalContext.current
-                var name by remember {
-                    mutableStateOf("")
-                }
-                var email by remember {
-                    mutableStateOf("")
-                }
-                var phone by remember {
-                    mutableStateOf("")
-                }
-                var nick by remember {
-                    mutableStateOf("")
-                }
 
-                name = intent?.getStringExtra("Name") ?: ""
-                nick = intent?.getStringExtra("Nick") ?: ""
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Column (
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        ) {
-                            Text("Name:", fontSize = 30.sp)
-                            Spacer(modifier = Modifier.width(16.dp))
-                            OutlinedTextField(
-                                value = name,
-                                onValueChange = { text ->
-                                    name = text
-                                },
-                                label = { Text("Name") },
-                                modifier = Modifier.weight(1f))
-                        }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        ) {
-                            Text("Email:", fontSize = 30.sp)
-                            Spacer(modifier = Modifier.width(16.dp))
-                            OutlinedTextField(
-                                value = email,
-                                onValueChange = { text ->
-                                    email = text
-                                },
-                                label = { Text("Email") },
-                                keyboardOptions = KeyboardOptions.Default.copy(
-                                    keyboardType = KeyboardType.Email
-                                ),
-                                modifier = Modifier.weight(1f))
-                        }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        ) {
-                            Text("Phone:", fontSize = 30.sp)
-                            Spacer(modifier = Modifier.width(16.dp))
-                            OutlinedTextField(
-                                value = phone,
-                                onValueChange = { text ->
-                                    phone = text
-                                },
-                                label = { Text("Phone") },
-                                keyboardOptions = KeyboardOptions.Default.copy(
-                                    keyboardType = KeyboardType.Number
-                                ),
-                                modifier = Modifier.weight(1f))
-                        }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        ) {
-                            Text("Nick:", fontSize = 30.sp)
-                            Spacer(modifier = Modifier.width(16.dp))
-                            OutlinedTextField(
-                                value = nick,
-                                onValueChange = { text ->
-                                    nick = text
-                                },
-                                label = { Text("Nick") },
-                                modifier = Modifier.weight(1f))
-                        }
-                        Spacer(modifier = Modifier.height(50.dp))
-                        Button(onClick = {
-
-                            val intent = Intent(context, MainActivity::class.java)
-                            intent.putExtra("Name", name)
-                            intent.putExtra("Nick", nick)
-                            context.startActivity(intent)
-                        }) {
-                            Text("Back", fontSize = 24.sp)
-                        }
-                    }
-                }
             }
         }
     }
 }
 
 @Composable
-fun Greeting2(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun ShowFormsView(name: String, nick: String, onBackPressed: () -> Unit) {
+    val context = LocalContext.current
+    var name by remember {
+        mutableStateOf(name)
+    }
+    var email by remember {
+        mutableStateOf("")
+    }
+    var phone by remember {
+        mutableStateOf("")
+    }
+    var nick by remember {
+        mutableStateOf(nick)
+    }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview2() {
-    JetpackComposeAppTheme {
-        val context = LocalContext.current
-        Column (
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center
+    Column (
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text("Name:", fontSize = 30.sp)
-                Spacer(modifier = Modifier.width(16.dp))
-                OutlinedTextField(
-                    value = "name",
-                    onValueChange = { text ->
-                    },
-                    modifier = Modifier.weight(1f))
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text("Email:", fontSize = 30.sp)
-                Spacer(modifier = Modifier.width(16.dp))
-                OutlinedTextField(
-                    value = "email",
-                    onValueChange = { text ->
-                    },
-                    modifier = Modifier.weight(1f))
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text("Phone:", fontSize = 30.sp)
-                Spacer(modifier = Modifier.width(16.dp))
-                OutlinedTextField(
-                    value = "phone",
-                    onValueChange = { text ->
-                    },
-                    modifier = Modifier.weight(1f))
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text("Nick:", fontSize = 30.sp)
-                Spacer(modifier = Modifier.width(16.dp))
-                OutlinedTextField(
-                    value = "nick",
-                    onValueChange = { text ->
-                    },
-                    modifier = Modifier.weight(1f))
-            }
-            Spacer(modifier = Modifier.height(50.dp))
-            Button(onClick = {
-
-                val intent = Intent(context, MainActivity::class.java)
-                intent.putExtra("Name", "other name")
-                intent.putExtra("Nick", "other nick")
-                context.startActivity(intent)
-            }) {
-                Text("Back", fontSize = 24.sp)
-            }
+            Text("Name:", fontSize = 30.sp)
+            Spacer(modifier = Modifier.width(16.dp))
+            OutlinedTextField(
+                value = name,
+                onValueChange = { text ->
+                    name = text
+                },
+                label = { Text("Name") },
+                modifier = Modifier.weight(1f))
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text("Email:", fontSize = 30.sp)
+            Spacer(modifier = Modifier.width(16.dp))
+            OutlinedTextField(
+                value = email,
+                onValueChange = { text ->
+                    email = text
+                },
+                label = { Text("Email") },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Email
+                ),
+                modifier = Modifier.weight(1f))
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text("Phone:", fontSize = 30.sp)
+            Spacer(modifier = Modifier.width(16.dp))
+            OutlinedTextField(
+                value = phone,
+                onValueChange = { text ->
+                    phone = text
+                },
+                label = { Text("Phone") },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number
+                ),
+                modifier = Modifier.weight(1f))
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text("Nick:", fontSize = 30.sp)
+            Spacer(modifier = Modifier.width(16.dp))
+            OutlinedTextField(
+                value = nick,
+                onValueChange = { text ->
+                    nick = text
+                },
+                label = { Text("Nick") },
+                modifier = Modifier.weight(1f))
+        }
+        Spacer(modifier = Modifier.height(50.dp))
+        Button(onClick = {
+            PreferencesManager.getInstance().setNameAndNick(name, nick, context)
+            onBackPressed()
+        }) {
+            Text("Back", fontSize = 24.sp)
         }
     }
 }

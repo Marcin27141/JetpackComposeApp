@@ -1,4 +1,4 @@
-package com.example.jetpackcomposeapp.list6
+package com.example.jetpackcomposeapp.services
 
 import android.content.ContentResolver
 import android.content.ContentUris

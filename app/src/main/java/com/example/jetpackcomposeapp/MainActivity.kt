@@ -1,33 +1,24 @@
 package com.example.jetpackcomposeapp
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,12 +27,8 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.jetpackcomposeapp.list1.List1FormsActivity
-import com.example.jetpackcomposeapp.list1.List1PhoneActivity
-import com.example.jetpackcomposeapp.list1.List1RatingActivity
-import com.example.jetpackcomposeapp.list6.ImageFromUri
-import com.example.jetpackcomposeapp.list6.PhotosListActivity
-import com.example.jetpackcomposeapp.list6.PreferencesManager
+import com.example.jetpackcomposeapp.list1.ShowList1NavHost
+import com.example.jetpackcomposeapp.list6.List6NavHost
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -74,22 +61,40 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    enum class AppScreens {
+        Home,
+        List1,
+        List6
+    }
 
+
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             JetpackComposeAppTheme {
-                val name = intent?.getStringExtra("Name") ?: "Name"
-                val nick = intent?.getStringExtra("Nick") ?: "Nick"
-                val preferencesManager = PreferencesManager.getInstance()
-                val imageUri = preferencesManager.getHomeImageUri(this)
+                val navController = rememberNavController()
+//                val name = intent?.getStringExtra("Name") ?: "Name"
+//                val nick = intent?.getStringExtra("Nick") ?: "Nick"
+//                val preferencesManager = PreferencesManager.getInstance()
+//                val imageUri = preferencesManager.getHomeImageUri(this)
+//
+//                List1View1(name, nick, imageUri)
 
-//                if (imageUri != null) {
-//                    iconView.setImageBitmap(ImageRepo.getInstance(requireContext()).getFileBitmap(imageUri, 150, 150))
-//                } else {
-//                    iconView.setImageResource(initialIcon)
-//                }
-                List1View1(name, nick, imageUri)
+                NavHost(navController, startDestination = AppScreens.Home.name) {
+                    composable(AppScreens.Home.name) {
+                        MainScreenView(
+                            { navController.navigate(AppScreens.List1.name) },
+                            { navController.navigate(AppScreens.List6.name) }
+                        )
+                    }
+                    composable(AppScreens.List1.name) {
+                        ShowList1NavHost()
+                    }
+                    composable(AppScreens.List6.name) {
+                        List6NavHost()
+                    }
+                }
             }
         }
         if (!allPermissionsGranted())
@@ -98,86 +103,33 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun List1View1(name: String, nick: String, imageUri: Uri?, modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-
+fun MainScreenView(navigateList1: () -> Unit, navigateList6: () -> Unit) {
     Column (
-        modifier = modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Bottom
     ) {
         Text(
-            text = name,
+            text = "Jetpack Compose",
             fontSize = 30.sp,
             modifier = Modifier
                 .padding(16.dp)
         )
-        if (imageUri != null)
-            ImageFromUri(imageUri, Modifier.size(200.dp))
-        else {
-            Image(
-                painter = painterResource(id = R.drawable.person_icon),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(200.dp)
-                    .background(Color.Gray)
-            )
-        }
-        Text(
-            text = nick,
-            fontSize = 30.sp,
+        Spacer(modifier = Modifier.weight(1f))
+        Button(
+            onClick = { navigateList1() },
             modifier = Modifier
-                .padding(16.dp)
-        )
-        Spacer(modifier = Modifier.height(50.dp))
-        Row (
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp, vertical = 8.dp)
         ) {
-            Button(
-                onClick = {
-                    Intent(context, List1PhoneActivity::class.java).also {
-                        context.startActivity(it)
-                    }
-                },
-                modifier = Modifier.weight(1f).padding(horizontal = 10.dp)
-            ) {
-                Text("1",
-                    fontSize = 26.sp)
-            }
-            Button(
-                onClick = {
-                    Intent(context, List1FormsActivity::class.java).also {
-                        it.putExtra("Name", name)
-                        it.putExtra("Nick", nick)
-                        context.startActivity(it)
-                    }
-                },
-                modifier = Modifier.weight(1f).padding(horizontal = 10.dp)) {
-                Text("2",
-                    fontSize = 26.sp)
-            }
-            Button(
-                onClick = {
-                    Intent(context, List1RatingActivity::class.java).also {
-                        context.startActivity(it)
-                    }
-                },
-                modifier = Modifier.weight(1f).padding(horizontal = 10.dp)) {
-                Text("3",
-                    fontSize = 26.sp)
-            }
+            Text("List 1",
+                fontSize = 26.sp)
         }
         Button(
-            onClick = {
-//                Intent(context, ListActivity::class.java).also {
-//                    context.startActivity(it)
-//                }
-                Intent(context, PhotosListActivity::class.java).also {
-                    context.startActivity(it)
-                }
-            },
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 8.dp)) {
+            onClick = { navigateList6() },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp, vertical = 8.dp)) {
             Text("List 6", fontSize = 26.sp)
         }
     }

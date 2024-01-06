@@ -2,6 +2,7 @@ package com.example.jetpackcomposeapp.list1
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
 import com.example.jetpackcomposeapp.R
 import com.gowtham.ratingbar.RatingBar
@@ -35,54 +37,61 @@ class List1RatingActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             JetpackComposeAppTheme {
-                var rating: Float by remember { mutableStateOf(3.2f) }
+
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Column (
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Row (modifier = Modifier.padding(horizontal = 16.dp, vertical = 40.dp)){
-                            Image(painter = painterResource(id = R.drawable.man_icon), contentDescription = "A man",
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .size(100.dp)
-                                    .background(Color.White))
-                            Spacer(modifier = Modifier.weight(1f))
-                            Image(painter = painterResource(id = R.drawable.woman_icon), contentDescription = "A woman",
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .size(100.dp)
-                                    .background(Color.White))
-                        }
-                        Row {
-                            Image(painter = painterResource(id = R.drawable.person_icon), contentDescription = "A woman",
-                                modifier = Modifier
-                                    .size(100.dp)
-                                    .background(Color.Gray))
-                        }
-                        RatingBar(
-                            value = rating,
-                            style = RatingBarStyle.Fill(),
-                            onValueChange = {
-                                rating = it
-                            },
-                            onRatingChanged = {
-                            },
-                            modifier = Modifier.padding(vertical = 50.dp)
-                        )
-                        Button(onClick = {
-                            onBackPressedDispatcher.onBackPressed()
-                        }) {
-                            Text("Back", fontSize = 30.sp)
-                        }
-                    }
+
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ShowRatingView(onBackPressed: () -> Unit) {
+    var rating: Float by remember { mutableStateOf(3.2f) }
+
+    Column (
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Row (modifier = Modifier.padding(horizontal = 16.dp, vertical = 40.dp)){
+            Image(painter = painterResource(id = R.drawable.man_icon), contentDescription = "A man",
+                modifier = Modifier
+                    .weight(1f)
+                    .size(100.dp)
+                    .background(Color.White))
+            Spacer(modifier = Modifier.weight(1f))
+            Image(painter = painterResource(id = R.drawable.woman_icon), contentDescription = "A woman",
+                modifier = Modifier
+                    .weight(1f)
+                    .size(100.dp)
+                    .background(Color.White))
+        }
+        Row {
+            Image(painter = painterResource(id = R.drawable.person_icon), contentDescription = "A woman",
+                modifier = Modifier
+                    .size(100.dp)
+                    .background(Color.Gray))
+        }
+        RatingBar(
+            value = rating,
+            style = RatingBarStyle.Fill(),
+            onValueChange = {
+                rating = it
+            },
+            onRatingChanged = {
+            },
+            modifier = Modifier.padding(vertical = 50.dp)
+        )
+        Button(onClick = {
+            onBackPressed()
+        }) {
+            Text("Back", fontSize = 30.sp)
         }
     }
 }

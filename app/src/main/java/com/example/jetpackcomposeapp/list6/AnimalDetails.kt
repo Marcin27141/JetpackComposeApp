@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.jetpackcomposeapp.database.AnimalItem
+import com.example.jetpackcomposeapp.services.MyRepository
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 import com.gowtham.ratingbar.RatingBar
 import com.gowtham.ratingbar.RatingBarStyle

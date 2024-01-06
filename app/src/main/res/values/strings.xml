@@ -10,4 +10,5 @@
     <string name="title_activity_set_image">Choose image</string>
     <string name="title_activity_photos_list">Photos</string>
     <string name="title_activity_list1_nav_host">List1NavHost</string>
+    <string name="title_activity_list6_nav_host">List6NavHost</string>
 </resources>

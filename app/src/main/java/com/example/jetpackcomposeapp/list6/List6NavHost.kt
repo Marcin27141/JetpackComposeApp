@@ -1,7 +1,5 @@
-package com.example.jetpackcomposeapp.list1
+package com.example.jetpackcomposeapp.list6
 
-import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -34,15 +32,13 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.jetpackcomposeapp.R
-import com.example.jetpackcomposeapp.list6.ImageFromUri
-import com.example.jetpackcomposeapp.list6.PhotosListActivity
-import com.example.jetpackcomposeapp.list6.ShowGridActivity
-import com.example.jetpackcomposeapp.list6.ShowSwipeImages
+import com.example.jetpackcomposeapp.services.MyRepository
 import com.example.jetpackcomposeapp.services.PreferencesManager
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
-class List1NavHost : ComponentActivity() {
+class List6NavHost : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -52,56 +48,71 @@ class List1NavHost : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
+                    
                 }
             }
         }
     }
 }
 
-private enum class AppScreens {
-    List1Home,
-    PhoneView,
-    FormsView,
-    RatingView
+enum class AppScreens {
+    List6Home,
+    PhotosGrid,
+    PhotosSwipe,
+    AnimalsList,
+    AnimalForm,
+    AnimalDetails
 }
 
-class HomeInfo(
-    val name: String,
-    val nick: String,
-    val imageUri: Uri?
-)
-
-
-
 @Composable
-fun ShowList1NavHost() {
+fun ShowList6NavHost() {
     val context = LocalContext.current
     val navController = rememberNavController()
     val defaultName = "Marcin Tkocz"
     val defaultNick = "Nick"
 
-    NavHost(navController, startDestination = AppScreens.List1Home.name) {
-        composable(AppScreens.List1Home.name) {
+    NavHost(navController, startDestination = AppScreens.List6Home.name) {
+        composable(AppScreens.List6Home.name) {
             val preferencesManager = PreferencesManager.getInstance()
             val (name, nick) = preferencesManager.getNameAndNick(context, defaultName, defaultNick)
             val imageUri = preferencesManager.getHomeImageUri(context)
-            val homeInfo = HomeInfo(name, nick, imageUri)
-            List1Home(homeInfo, navController)
+            val homeInfo = List6HomeInfo(name, nick, imageUri)
+            List6Home(homeInfo, navController)
         }
-        composable(AppScreens.PhoneView.name) { ShowPhoneView() }
-        composable(AppScreens.RatingView.name) {
-            ShowRatingView { navController.navigate(AppScreens.List1Home.name) }
+        composable(AppScreens.AnimalsList.name) { ShowAnimalsListView(navController) }
+        composable("${AppScreens.AnimalDetails.name}/{id}") {
+            val animalId = it.arguments?.getString("id")
+            val animal = MyRepository.getInstance(context).getAnimalById(animalId!!.toInt())
+            if (animal != null)
+                ShowDetails(animal, navController)
         }
-        composable(AppScreens.FormsView.name) {
-            val (name, nick) = PreferencesManager.getInstance().getNameAndNick(context, defaultName, defaultNick)
-            ShowFormsView(name = name, nick = nick) { navController.navigate(AppScreens.List1Home.name) }
+        composable("${AppScreens.AnimalForm.name}?id={id}",
+            arguments = listOf(navArgument("id") { defaultValue = "" })) {
+            val animalId = it.arguments?.getString("id")
+            val animal = if (animalId.isNullOrBlank()) null else
+                MyRepository.getInstance(context).getAnimalById(animalId.toInt())
+            ShowCreate(animal, navController)
+        }
+        composable(AppScreens.PhotosGrid.name) {
+            ShowGridActivity { page -> navController.navigate("${AppScreens.PhotosSwipe.name}/${page}") }
+        }
+        composable("${AppScreens.PhotosSwipe.name}/{startPage}") { navBackStackEntry ->
+            val startPage = navBackStackEntry.arguments?.getString("startPage")
+            startPage?.let {
+                ShowSwipeImages(it.toInt()) { navController.popBackStack(AppScreens.List6Home.name, false) }
+            }
         }
     }
 }
 
+class List6HomeInfo(
+    val name: String,
+    val nick: String,
+    val imageUri: Uri?
+)
+
 @Composable
-fun List1Home(homeInfo: HomeInfo, navController: NavController) {
+fun List6Home(homeInfo: List6HomeInfo, navController: NavController) {
     Column (
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -137,33 +148,23 @@ fun List1Home(homeInfo: HomeInfo, navController: NavController) {
         ) {
             Button(
                 onClick = {
-                    navController.navigate(AppScreens.PhoneView.name)
+                    navController.navigate(AppScreens.PhotosGrid.name)
                 },
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 10.dp)
             ) {
-                Text("1",
+                Text("Photos",
                     fontSize = 26.sp)
             }
             Button(
                 onClick = {
-                    navController.navigate(AppScreens.FormsView.name)
+                    navController.navigate(AppScreens.AnimalsList.name)
                 },
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 10.dp)) {
-                Text("2",
-                    fontSize = 26.sp)
-            }
-            Button(
-                onClick = {
-                    navController.navigate(AppScreens.RatingView.name)
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 10.dp)) {
-                Text("3",
+                Text("Animals",
                     fontSize = 26.sp)
             }
         }

@@ -33,10 +33,6 @@ import com.example.jetpackcomposeapp.services.ImageRepo
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
 class PhotosListActivity : ComponentActivity() {
-    enum class AppScreens {
-        PhotosGrid,
-        PhotosSwipe,
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -53,29 +49,7 @@ class PhotosListActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun List6NavHost() {
-    val navController = rememberNavController()
-    NavHost(navController, startDestination = PhotosListActivity.AppScreens.PhotosGrid.name) {
-        composable(PhotosListActivity.AppScreens.PhotosGrid.name) {
-            ShowGridActivity { page ->
-                navController.navigate(
-                    "${PhotosListActivity.AppScreens.PhotosSwipe.name}/{startPage}"
-                        .replace(
-                            oldValue = "{startPage}",
-                            newValue = "$page"
-                        )
-                )
-            }
-        }
-        composable("${PhotosListActivity.AppScreens.PhotosSwipe.name}/{startPage}") { navBackStackEntry ->
-            val startPage = navBackStackEntry.arguments?.getString("startPage")
-            startPage?.let {
-                ShowSwipeImages(it.toInt())
-            }
-        }
-    }
-}
+
 
 @Composable
 fun ShowGridActivity(onNavigateToSwipe: (Int) -> Unit) {

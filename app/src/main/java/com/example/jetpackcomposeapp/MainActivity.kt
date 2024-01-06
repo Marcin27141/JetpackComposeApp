@@ -29,6 +29,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.jetpackcomposeapp.list1.ShowList1NavHost
 import com.example.jetpackcomposeapp.list6.List6NavHost
+import com.example.jetpackcomposeapp.list6.ShowList6NavHost
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -92,7 +93,7 @@ class MainActivity : ComponentActivity() {
                         ShowList1NavHost()
                     }
                     composable(AppScreens.List6.name) {
-                        List6NavHost()
+                        ShowList6NavHost()
                     }
                 }
             }

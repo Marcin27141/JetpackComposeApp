@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.jetpackcomposeapp.database.AnimalItem
 import com.example.jetpackcomposeapp.services.MyRepository
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
@@ -53,14 +54,7 @@ class CreateAnimal : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ShowCreate(animalToUpdate, { onBackPressedDispatcher.onBackPressed()}, {animal ->
-                        if (animal.id == 0) {
-                            animal.id = MyRepository.getInstance(this).addAnimalWithId(animal).toInt();
-                        }
-                        else
-                            MyRepository.getInstance(this).updateAnimal(animal.id, animal);
-                        startActivity(AnimalDetails.newIntent(applicationContext, animal))
-                    })
+
                 }
             }
         }
@@ -76,7 +70,7 @@ class CreateAnimal : ComponentActivity() {
 }
 
 @Composable
-fun ShowCreate(animal: AnimalItem?, onBackPressed: () -> Unit, onSave: (AnimalItem) -> Unit) {
+fun ShowCreate(animal: AnimalItem?, navController: NavController) {
     val radioItems = listOf(
         AnimalItem.AnimalType.PREDATOR,
         AnimalItem.AnimalType.RODENT,
@@ -192,7 +186,12 @@ fun ShowCreate(animal: AnimalItem?, onBackPressed: () -> Unit, onSave: (AnimalIt
             Button(onClick = {
                 if (name.value.isNotBlank() && latin.value.isNotBlank() && radioOption.value != -1) {
                     val newAnimal = AnimalItem(animal?.id ?: 0, name.value, latin.value, radioItems[radioOption.value], health.value, power.value, isDeadly.value)
-                    onSave(newAnimal)
+                    if (animal == null) {
+                        newAnimal.id = MyRepository.getInstance(context).addAnimalWithId(newAnimal).toInt();
+                    }
+                    else
+                        MyRepository.getInstance(context).updateAnimal(animal.id, newAnimal);
+                    navController.navigate("${AppScreens.AnimalDetails.name}/${newAnimal.id}")
                 }
                 else {
                     Toast.makeText(context, "Please fill necessary info", Toast.LENGTH_SHORT).show()
@@ -201,7 +200,7 @@ fun ShowCreate(animal: AnimalItem?, onBackPressed: () -> Unit, onSave: (AnimalIt
                 Text("Save", fontSize = 28.sp)
             }
             Spacer(modifier = Modifier.width(20.dp))
-            Button(onClick = onBackPressed) {
+            Button(onClick = { navController.popBackStack() }) {
                 Text("Cancel", fontSize = 28.sp)
             }
         }

@@ -44,8 +44,8 @@ class SetImageActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val initialPage = intent?.getIntExtra("StartPage", 0) ?: 0
-                    ShowSwipeImages(initialPage)
+//                    val initialPage = intent?.getIntExtra("StartPage", 0) ?: 0
+//                    ShowSwipeImages(initialPage)
                 }
             }
         }
@@ -67,7 +67,7 @@ fun ImageFromUri(uri: Uri, modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ShowSwipeImages(startPage: Int = 0) {
+fun ShowSwipeImages(startPage: Int = 0, onNavigateToHome: () -> Unit) {
     val context = LocalContext.current
     val images = ImageRepo.getInstance(context).getSharedList() ?: mutableListOf()
     val pagerState = rememberPagerState(initialPage = startPage, pageCount = { images.size })
@@ -83,9 +83,7 @@ fun ShowSwipeImages(startPage: Int = 0) {
         Button(onClick = {
             PreferencesManager.getInstance()
                 .setHomeImage(images[pagerState.currentPage].contentUri!!, context)
-            Intent(context, MainActivity::class.java).also {
-                context.startActivity(it)
-            }
+            onNavigateToHome()
         }, modifier = Modifier.align(Alignment.BottomCenter).padding(vertical = 30.dp)) {
             Text("Set", fontSize = 24.sp, modifier = Modifier.padding(horizontal = 10.dp))
         }

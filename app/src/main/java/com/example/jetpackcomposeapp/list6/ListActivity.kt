@@ -42,6 +42,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.jetpackcomposeapp.database.AnimalItem
 import com.example.jetpackcomposeapp.services.MyRepository
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
@@ -56,42 +57,51 @@ class ListActivity : ComponentActivity() {
             JetpackComposeAppTheme {
                 // A surface container using the 'background' color from the theme
 
-                var animalsList by remember {
-                    mutableStateOf(MyRepository.getInstance(applicationContext).getAnimals().toList())
-                }
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                ){
-                    Column (horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Animals", fontSize = 42.sp, modifier = Modifier.padding(20.dp))
-                        ItemsList(animalsList,
-                            {animal -> startActivity(AnimalDetails.newIntent(applicationContext, animal))},
-                            {animal ->
-                                run {
-                                    if (MyRepository.getInstance(applicationContext).deleteAnimal(animal))
-                                        animalsList = MyRepository.getInstance(applicationContext).getAnimals()
-                                }
-                            })
-                    }
-                    FloatingActionButton(onClick = { startActivity(Intent(applicationContext, CreateAnimal::class.java))},
-                        modifier = Modifier.align(Alignment.BottomEnd).padding(40.dp)) {
-                        Icon(imageVector = Icons.Default.Add, contentDescription = null)
-                    }
-                }
+
             }
         }
     }
 }
 
 @Composable
-fun ItemsList(animals: List<AnimalItem>,
-              navigateToProfile: (AnimalItem) -> Unit,
-              tryDeleteAnimal: (AnimalItem) -> Unit) {
+fun ShowAnimalsListView(navController: NavController) {
+    val context = LocalContext.current
+    var animalsList by remember {
+        mutableStateOf(MyRepository.getInstance(context).getAnimals().toList())
+    }
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ){
+        Column (horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("Animals", fontSize = 42.sp, modifier = Modifier.padding(20.dp))
+            AnimalsList(animalsList,
+                {animal ->
+                    //startActivity(AnimalDetails.newIntent(applicationContext, animal))
+                    navController.navigate("${AppScreens.AnimalDetails.name}/${animal.id}")
+                },
+                {animal ->
+                    run {
+                        if (MyRepository.getInstance(context).deleteAnimal(animal))
+                            animalsList = MyRepository.getInstance(context).getAnimals()
+                    }
+                })
+        }
+        FloatingActionButton(onClick = { navController.navigate(AppScreens.AnimalForm.name) },
+            modifier = Modifier.align(Alignment.BottomEnd).padding(40.dp)) {
+            Icon(imageVector = Icons.Default.Add, contentDescription = null)
+        }
+    }
+}
+
+@Composable
+fun AnimalsList(animals: List<AnimalItem>,
+                navigateToDetails: (AnimalItem) -> Unit,
+                tryDeleteAnimal: (AnimalItem) -> Unit) {
     LazyColumn {
         items(
             items = animals,
             itemContent = {
-                AnimalListItem(animal = it, navigateToProfile, tryDeleteAnimal)
+                AnimalListItem(animal = it, navigateToDetails, tryDeleteAnimal)
             })
     }
 }

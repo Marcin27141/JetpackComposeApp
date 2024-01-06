@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.jetpackcomposeapp.database.AnimalItem
 import com.example.jetpackcomposeapp.services.MyRepository
 import com.example.jetpackcomposeapp.ui.theme.JetpackComposeAppTheme
@@ -54,7 +55,7 @@ class AnimalDetails : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ShowDetails(animal) { startActivity(Intent(applicationContext, ListActivity::class.java)) }
+
                 }
             }
         }
@@ -70,8 +71,7 @@ class AnimalDetails : ComponentActivity() {
 }
 
 @Composable
-fun ShowDetails(animal: AnimalItem, onBackPressed: () -> Unit) {
-    val context = LocalContext.current
+fun ShowDetails(animal: AnimalItem, navController: NavController) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -122,12 +122,12 @@ fun ShowDetails(animal: AnimalItem, onBackPressed: () -> Unit) {
         Row(
             modifier = Modifier.padding(14.dp)
         ){
-            Button(onClick = onBackPressed) {
+            Button(onClick = { navController.popBackStack(AppScreens.AnimalsList.name, false) }) {
                 Text("Back", fontSize = 28.sp)
             }
             Spacer(modifier = Modifier.width(20.dp))
             Button(onClick = {
-                context.startActivity(CreateAnimal.getIntentForUpdate(context, animal))
+                navController.navigate("${AppScreens.AnimalForm.name}?id=${animal.id}")
             }) {
                 Text("Modify", fontSize = 28.sp)
             }

@@ -18,7 +18,7 @@ import java.io.InputStream
 class ImageRepo {
     lateinit var uri : Uri
 
-    private var photo_storage = SHARED_STORAGE_ID
+    private var photo_storage = APP_STORAGE_ID
     private var sortyBy = "${MediaStore.Images.Media.DATE_ADDED}"
 
     fun setStorage(storage: Int) : Boolean {

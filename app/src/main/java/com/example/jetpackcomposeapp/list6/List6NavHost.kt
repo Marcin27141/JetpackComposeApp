@@ -1,11 +1,14 @@
 package com.example.jetpackcomposeapp.list6
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,8 +16,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,9 +42,32 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.jetpackcomposeapp.R
+import com.example.jetpackcomposeapp.services.ImageRepo
 import com.example.jetpackcomposeapp.services.MyRepository
 import com.example.jetpackcomposeapp.services.PreferencesManager
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DefaultAppBar(actions: @Composable RowScope.() -> Unit = {}) {
+    TopAppBar(
+        title = { Text("List 6") },
+        actions = actions,
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            actionIconContentColor = MaterialTheme.colorScheme.onSecondary
+        )
+    )
+}
+
+@Composable
+fun ContentWithDefaultAppBar(content: @Composable (PaddingValues) -> Unit) {
+    Scaffold(
+        topBar = { DefaultAppBar {} },
+        content = content
+    )
+}
 
 enum class AppScreens {
     List6Home,
@@ -91,59 +128,61 @@ fun ShowList6NavHost() {
 
 @Composable
 private fun List6Home(homeInfo: List6HomeInfo, navController: NavController) {
-    Column (
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = homeInfo.name,
-            fontSize = 30.sp,
-            modifier = Modifier
-                .padding(16.dp)
-        )
-        if (homeInfo.imageUri != null)
-            ImageFromUri(homeInfo.imageUri, Modifier.size(200.dp))
-        else {
-            Image(
-                painter = painterResource(id = R.drawable.person_icon),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(200.dp)
-                    .background(Color.Gray)
-            )
-        }
-        Text(
-            text = homeInfo.nick,
-            fontSize = 30.sp,
-            modifier = Modifier
-                .padding(16.dp)
-        )
-        Spacer(modifier = Modifier.height(50.dp))
-        Row (
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+    ContentWithDefaultAppBar {
+        Column (
+            modifier = Modifier.fillMaxSize().padding(it),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Button(
-                onClick = {
-                    navController.navigate(AppScreens.PhotosGrid.name)
-                },
+            Text(
+                text = homeInfo.name,
+                fontSize = 30.sp,
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 10.dp)
-            ) {
-                Text("Photos",
-                    fontSize = 26.sp)
+                    .padding(16.dp)
+            )
+            if (homeInfo.imageUri != null)
+                ImageFromUri(homeInfo.imageUri, Modifier.size(200.dp))
+            else {
+                Image(
+                    painter = painterResource(id = R.drawable.person_icon),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(200.dp)
+                        .background(Color.Gray)
+                )
             }
-            Button(
-                onClick = {
-                    navController.navigate(AppScreens.AnimalsList.name)
-                },
+            Text(
+                text = homeInfo.nick,
+                fontSize = 30.sp,
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 10.dp)) {
-                Text("Animals",
-                    fontSize = 26.sp)
+                    .padding(16.dp)
+            )
+            Spacer(modifier = Modifier.height(50.dp))
+            Row (
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(
+                    onClick = {
+                        navController.navigate(AppScreens.PhotosGrid.name)
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 10.dp)
+                ) {
+                    Text("Photos",
+                        fontSize = 26.sp)
+                }
+                Button(
+                    onClick = {
+                        navController.navigate(AppScreens.AnimalsList.name)
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 10.dp)) {
+                    Text("Animals",
+                        fontSize = 26.sp)
+                }
             }
         }
     }

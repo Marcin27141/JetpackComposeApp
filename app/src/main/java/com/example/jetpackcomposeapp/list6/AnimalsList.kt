@@ -49,28 +49,33 @@ fun ShowAnimalsList(navController: NavController) {
     var animalsList by remember {
         mutableStateOf(MyRepository.getInstance(context).getAnimals().toList())
     }
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ){
-        Column (horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Animals", fontSize = 42.sp, modifier = Modifier.padding(20.dp))
-            AnimalsList(animalsList,
-                {animal ->
-                    //startActivity(AnimalDetails.newIntent(applicationContext, animal))
-                    navController.navigate("${AppScreens.AnimalDetails.name}/${animal.id}")
-                },
-                {animal ->
-                    run {
-                        if (MyRepository.getInstance(context).deleteAnimal(animal))
-                            animalsList = MyRepository.getInstance(context).getAnimals()
-                    }
-                })
-        }
-        FloatingActionButton(onClick = { navController.navigate(AppScreens.AnimalForm.name) },
-            modifier = Modifier.align(Alignment.BottomEnd).padding(40.dp)) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = null)
+    ContentWithDefaultAppBar {
+        Box(
+            modifier = Modifier.fillMaxSize().padding(it)
+        ){
+            Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("Animals", fontSize = 42.sp, modifier = Modifier.padding(20.dp))
+                AnimalsList(animalsList,
+                    {animal ->
+                        //startActivity(AnimalDetails.newIntent(applicationContext, animal))
+                        navController.navigate("${AppScreens.AnimalDetails.name}/${animal.id}")
+                    },
+                    {animal ->
+                        run {
+                            if (MyRepository.getInstance(context).deleteAnimal(animal))
+                                animalsList = MyRepository.getInstance(context).getAnimals()
+                        }
+                    })
+            }
+            FloatingActionButton(onClick = { navController.navigate(AppScreens.AnimalForm.name) },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(40.dp)) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = null)
+            }
         }
     }
+
 }
 
 @Composable

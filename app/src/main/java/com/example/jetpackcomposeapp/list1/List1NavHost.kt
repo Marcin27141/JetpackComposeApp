@@ -13,7 +13,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +48,7 @@ private class HomeInfo(
     val imageUri: Uri?
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun List1NavHost() {
     val context = LocalContext.current
@@ -50,23 +56,34 @@ fun List1NavHost() {
     val defaultName = "Marcin Tkocz"
     val defaultNick = "Nick"
 
-    NavHost(navController, startDestination = AppScreens.List1Home.name) {
-        composable(AppScreens.List1Home.name) {
-            val preferencesManager = PreferencesManager.getInstance()
-            val (name, nick) = preferencesManager.getNameAndNick(context, defaultName, defaultNick)
-            val imageUri = preferencesManager.getHomeImageUri(context)
-            val homeInfo = HomeInfo(name, nick, imageUri)
-            ShowList1Home(homeInfo, navController)
-        }
-        composable(AppScreens.PhoneView.name) { ShowPhoneView() }
-        composable(AppScreens.RatingView.name) {
-            ShowRatingView { navController.popBackStack(AppScreens.List1Home.name, false) }
-        }
-        composable(AppScreens.FormsView.name) {
-            val (name, nick) = PreferencesManager.getInstance().getNameAndNick(context, defaultName, defaultNick)
-            ShowFormsView(name, nick) { navController.popBackStack(AppScreens.List1Home.name, false) }
+    Scaffold(topBar = { TopAppBar(
+        title = { Text("List 1") },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            actionIconContentColor = MaterialTheme.colorScheme.onSecondary
+        )
+    ) }) { values ->
+        NavHost(navController, startDestination = AppScreens.List1Home.name, modifier = Modifier.padding(values)) {
+            composable(AppScreens.List1Home.name) {
+                val preferencesManager = PreferencesManager.getInstance()
+                val (name, nick) = preferencesManager.getNameAndNick(context, defaultName, defaultNick)
+                val imageUri = preferencesManager.getHomeImageUri(context)
+                val homeInfo = HomeInfo(name, nick, imageUri)
+                ShowList1Home(homeInfo, navController)
+            }
+            composable(AppScreens.PhoneView.name) { ShowPhoneView() }
+            composable(AppScreens.RatingView.name) {
+                ShowRatingView { navController.popBackStack(AppScreens.List1Home.name, false) }
+            }
+            composable(AppScreens.FormsView.name) {
+                val (name, nick) = PreferencesManager.getInstance().getNameAndNick(context, defaultName, defaultNick)
+                ShowFormsView(name, nick) { navController.popBackStack(AppScreens.List1Home.name, false) }
+            }
         }
     }
+
 }
 
 @Composable

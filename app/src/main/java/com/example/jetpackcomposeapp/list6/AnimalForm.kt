@@ -62,112 +62,116 @@ fun ShowCreate(animal: AnimalItem?, navController: NavController) {
     }
     val context = LocalContext.current
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
+    ContentWithDefaultAppBar {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(it),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
-            Text("Name:", fontSize = 22.sp, modifier = Modifier.padding(14.dp))
-            Spacer(modifier = Modifier.width(16.dp))
-            OutlinedTextField(
-                value = name,
-                onValueChange = { text ->
-                    name = text
-                },
-                label = { Text("Name") },
-                modifier = Modifier.weight(1f))
-        }
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-        ) {
-            Text("Latin:", fontSize = 22.sp, modifier = Modifier.padding(14.dp))
-            Spacer(modifier = Modifier.width(16.dp))
-            OutlinedTextField(
-                value = latin,
-                onValueChange = { text ->
-                    latin = text
-                },
-                label = { Text("Latin name") },
-                modifier = Modifier.weight(1f))
-        }
-        Row(
-            modifier = Modifier
+            Row(modifier = Modifier
                 .fillMaxWidth()
-                .padding(6.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            Column (
-                modifier = Modifier.padding(vertical = 2.dp)
+                .padding(8.dp)
             ) {
-                for (i in 0..3) {
-                    Row (
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = radioOption == i,
-                            onClick = { radioOption = i },
-                            enabled = true
-                        )
-                        Text(radioItems[i].toString().lowercase().replaceFirstChar { ch -> ch.uppercaseChar() }, fontSize = 16.sp)
+                Text("Name:", fontSize = 22.sp, modifier = Modifier.padding(14.dp))
+                Spacer(modifier = Modifier.width(16.dp))
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { text ->
+                        name = text
+                    },
+                    label = { Text("Name") },
+                    modifier = Modifier.weight(1f))
+            }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+            ) {
+                Text("Latin:", fontSize = 22.sp, modifier = Modifier.padding(14.dp))
+                Spacer(modifier = Modifier.width(16.dp))
+                OutlinedTextField(
+                    value = latin,
+                    onValueChange = { text ->
+                        latin = text
+                    },
+                    label = { Text("Latin name") },
+                    modifier = Modifier.weight(1f))
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                Column (
+                    modifier = Modifier.padding(vertical = 2.dp)
+                ) {
+                    for (i in 0..3) {
+                        Row (
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = radioOption == i,
+                                onClick = { radioOption = i },
+                                enabled = true
+                            )
+                            Text(radioItems[i].toString().lowercase().replaceFirstChar { ch -> ch.uppercaseChar() }, fontSize = 16.sp)
+                        }
                     }
                 }
-            }
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("Is deadly?", fontSize = 20.sp)
-                Checkbox(checked = isDeadly,
-                    onCheckedChange = { checked -> isDeadly = checked })
-            }
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Is deadly?", fontSize = 20.sp)
+                    Checkbox(checked = isDeadly,
+                        onCheckedChange = { checked -> isDeadly = checked })
+                }
 
-        }
-        Row(
-            modifier = Modifier.padding(14.dp),
-        ) {
-            Text("Health:", fontSize = 30.sp)
-            Spacer(modifier = Modifier.width(20.dp))
-            Slider(value = health.toFloat(), onValueChange = { newHealth -> health = newHealth.toInt() }, valueRange = 0f..5f, steps = 5)
-        }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(14.dp),
-        ) {
-            Text("Power:", fontSize = 30.sp)
-            Spacer(modifier = Modifier.width(20.dp))
-            RatingBar(
-                value = power,
-                style = RatingBarStyle.Fill(),
-                onValueChange = { newPower -> power = newPower},
-                onRatingChanged = {},
-            )
-        }
-        Row(
-            modifier = Modifier.padding(14.dp)
-        ){
-            Button(onClick = {
-                if (name.isNotBlank() && latin.isNotBlank() && radioOption != -1) {
-                    val newAnimal = AnimalItem(animal?.id ?: 0, name, latin, radioItems[radioOption], health, power, isDeadly)
-                    if (animal == null) {
-                        newAnimal.id = MyRepository.getInstance(context).addAnimalWithId(newAnimal).toInt()
-                    }
-                    else
-                        MyRepository.getInstance(context).updateAnimal(animal.id, newAnimal)
-                    navController.navigate("${AppScreens.AnimalDetails.name}/${newAnimal.id}")
-                }
-                else {
-                    Toast.makeText(context, "Please fill necessary info", Toast.LENGTH_SHORT).show()
-                }
-            }) {
-                Text("Save", fontSize = 28.sp)
             }
-            Spacer(modifier = Modifier.width(20.dp))
-            Button(onClick = { navController.popBackStack() }) {
-                Text("Cancel", fontSize = 28.sp)
+            Row(
+                modifier = Modifier.padding(14.dp),
+            ) {
+                Text("Health:", fontSize = 30.sp)
+                Spacer(modifier = Modifier.width(20.dp))
+                Slider(value = health.toFloat(), onValueChange = { newHealth -> health = newHealth.toInt() }, valueRange = 0f..5f, steps = 5)
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(14.dp),
+            ) {
+                Text("Power:", fontSize = 30.sp)
+                Spacer(modifier = Modifier.width(20.dp))
+                RatingBar(
+                    value = power,
+                    style = RatingBarStyle.Fill(),
+                    onValueChange = { newPower -> power = newPower},
+                    onRatingChanged = {},
+                )
+            }
+            Row(
+                modifier = Modifier.padding(14.dp)
+            ){
+                Button(onClick = {
+                    if (name.isNotBlank() && latin.isNotBlank() && radioOption != -1) {
+                        val newAnimal = AnimalItem(animal?.id ?: 0, name, latin, radioItems[radioOption], health, power, isDeadly)
+                        if (animal == null) {
+                            newAnimal.id = MyRepository.getInstance(context).addAnimalWithId(newAnimal).toInt()
+                        }
+                        else
+                            MyRepository.getInstance(context).updateAnimal(animal.id, newAnimal)
+                        navController.navigate("${AppScreens.AnimalDetails.name}/${newAnimal.id}")
+                    }
+                    else {
+                        Toast.makeText(context, "Please fill necessary info", Toast.LENGTH_SHORT).show()
+                    }
+                }) {
+                    Text("Save", fontSize = 28.sp)
+                }
+                Spacer(modifier = Modifier.width(20.dp))
+                Button(onClick = { navController.popBackStack() }) {
+                    Text("Cancel", fontSize = 28.sp)
+                }
             }
         }
     }
+
+
 }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,21 +31,25 @@ fun ShowSwipeImages(startPage: Int = 0, onNavigateToHome: () -> Unit) {
     val context = LocalContext.current
     val images = ImageRepo.getInstance(context).getSharedList() ?: mutableListOf()
     val pagerState = rememberPagerState(initialPage = startPage, pageCount = { images.size })
-    Box(modifier = Modifier.fillMaxSize()) {
-        HorizontalPager(
-            state = pagerState
+    ContentWithDefaultAppBar {
+        Box(modifier = Modifier.fillMaxSize().padding(it)) {
+            HorizontalPager(
+                state = pagerState
             ) { index ->
-            ImageFromFile(images[index],
-                Modifier
-                    .fillMaxSize()
-                    .padding(start = 20.dp, end = 20.dp, bottom = 100.dp, top = 30.dp))
-        }
-        Button(onClick = {
-            PreferencesManager.getInstance()
-                .setHomeImage(images[pagerState.currentPage].contentUri!!, context)
-            onNavigateToHome()
-        }, modifier = Modifier.align(Alignment.BottomCenter).padding(vertical = 30.dp)) {
-            Text("Set", fontSize = 24.sp, modifier = Modifier.padding(horizontal = 10.dp))
+                ImageFromFile(images[index],
+                    Modifier
+                        .fillMaxSize()
+                        .padding(start = 20.dp, end = 20.dp, bottom = 100.dp, top = 30.dp))
+            }
+            Button(onClick = {
+                PreferencesManager.getInstance()
+                    .setHomeImage(images[pagerState.currentPage].contentUri!!, context)
+                onNavigateToHome()
+            }, modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(vertical = 30.dp)) {
+                Text("Set", fontSize = 24.sp, modifier = Modifier.padding(horizontal = 10.dp))
+            }
         }
     }
 }

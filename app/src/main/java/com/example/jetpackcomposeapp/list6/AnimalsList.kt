@@ -128,7 +128,8 @@ fun AnimalListItem(animal: AnimalItem,
                     .fillMaxWidth()
                     .align(Alignment.CenterVertically)
             ) {
-                Text(text = animal.name, style = typography.headlineMedium)
+                val nameColor = if (animal.isDeadly) Color.Red else Color.Green
+                Text(text = animal.name, style = typography.headlineMedium, color = nameColor)
                 Text(text = animal.latinName, fontSize = 16.sp, fontStyle = FontStyle.Italic)
             }
         }

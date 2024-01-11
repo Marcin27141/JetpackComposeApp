@@ -29,7 +29,7 @@ import com.example.jetpackcomposeapp.services.PreferencesManager
 @Composable
 fun ShowSwipeImages(startPage: Int = 0, onNavigateToHome: () -> Unit) {
     val context = LocalContext.current
-    val images = ImageRepo.getInstance(context).getSharedList() ?: mutableListOf()
+    val images = ImageRepo.getInstance(context).getFilesList() ?: mutableListOf()
     val pagerState = rememberPagerState(initialPage = startPage, pageCount = { images.size })
     ContentWithDefaultAppBar {
         Box(modifier = Modifier.fillMaxSize().padding(it)) {

@@ -1,7 +1,7 @@
 package com.example.jetpackcomposeapp.list6
 
 import android.net.Uri
-import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,15 +18,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
@@ -37,10 +38,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -55,11 +53,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.jetpackcomposeapp.NavigationItem
 import com.example.jetpackcomposeapp.R
-import com.example.jetpackcomposeapp.services.ImageRepo
 import com.example.jetpackcomposeapp.services.MyRepository
 import com.example.jetpackcomposeapp.services.PreferencesManager
 import kotlinx.coroutines.launch
@@ -102,6 +100,7 @@ private class List6HomeInfo(
     val imageUri: Uri?
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShowList6NavHost() {
     val context = LocalContext.current
@@ -167,35 +166,94 @@ fun ShowList6NavHost() {
             }
         }
     ) {
-        NavHost(navController, startDestination = AppScreens.List6Home.name) {
-            composable(AppScreens.List6Home.name) {
-                val preferencesManager = PreferencesManager.getInstance()
-                val (name, nick) = preferencesManager.getNameAndNick(context, defaultName, defaultNick)
-                val imageUri = preferencesManager.getHomeImageUri(context)
-                val homeInfo = List6HomeInfo(name, nick, imageUri)
-                List6Home(homeInfo, navController)
+        val bottomNavItems = listOf(
+            NavigationItem(
+                "Photos",
+                ImageVector.vectorResource(R.drawable.photos_icon),
+                AppScreens.PhotosGrid.name
+            ),
+            NavigationItem(
+                "Home",
+                Icons.Default.Home,
+                AppScreens.List6Home.name
+            ),
+            NavigationItem(
+                "Animals",
+                ImageVector.vectorResource(R.drawable.predator_icon),
+                AppScreens.AnimalsList.name
+            )
+        )
+
+        var bottomSelectedIndex by rememberSaveable {
+            mutableIntStateOf(1)
+        }
+
+        Scaffold(
+            bottomBar = {
+                NavigationBar {
+                    bottomNavItems.forEachIndexed { index, navigationItem ->
+                        NavigationBarItem(
+                            selected = bottomSelectedIndex == index,
+                            onClick = {
+                                bottomSelectedIndex = index
+
+                                if (navController.currentBackStack.value.any { entry -> entry.destination.route == navigationItem.route })
+                                    navController.popBackStack(navigationItem.route, false)
+                                else
+                                    navController.navigate(navigationItem.route)
+                            },
+                            label = {
+                                Text(navigationItem.title)
+                            },
+                            icon = { 
+                                BadgedBox(badge = {}) {
+                                    Icon(imageVector = navigationItem.icon, contentDescription = navigationItem.title)
+                                }
+                            })
+                    }
+                }
             }
-            composable(AppScreens.AnimalsList.name) { ShowAnimalsList(navController) }
-            composable("${AppScreens.AnimalDetails.name}/{id}") {
-                val animalId = it.arguments?.getString("id")
-                val animal = MyRepository.getInstance(context).getAnimalById(animalId!!.toInt())
-                if (animal != null)
-                    ShowDetails(animal, navController)
-            }
-            composable("${AppScreens.AnimalForm.name}?id={id}",
-                arguments = listOf(navArgument("id") { defaultValue = "" })) {
-                val animalId = it.arguments?.getString("id")
-                val animal = if (animalId.isNullOrBlank()) null else
-                    MyRepository.getInstance(context).getAnimalById(animalId.toInt())
-                ShowCreate(animal, navController)
-            }
-            composable(AppScreens.PhotosGrid.name) {
-                ShowPhotosGrid { page -> navController.navigate("${AppScreens.PhotosSwipe.name}/${page}") }
-            }
-            composable("${AppScreens.PhotosSwipe.name}/{startPage}") { navBackStackEntry ->
-                val startPage = navBackStackEntry.arguments?.getString("startPage")
-                startPage?.let {
-                    ShowSwipeImages(it.toInt()) { navController.popBackStack(AppScreens.List6Home.name, false) }
+        ) {
+            NavHost(navController, startDestination = AppScreens.List6Home.name, modifier = Modifier.padding(it)) {
+                composable(AppScreens.List6Home.name) {
+                    val preferencesManager = PreferencesManager.getInstance()
+                    val (name, nick) = preferencesManager.getNameAndNick(
+                        context,
+                        defaultName,
+                        defaultNick
+                    )
+                    val imageUri = preferencesManager.getHomeImageUri(context)
+                    val homeInfo = List6HomeInfo(name, nick, imageUri)
+                    List6Home(homeInfo, navController)
+                }
+                composable(AppScreens.AnimalsList.name) { ShowAnimalsList(navController) }
+                composable("${AppScreens.AnimalDetails.name}/{id}") {
+                    val animalId = it.arguments?.getString("id")
+                    val animal = MyRepository.getInstance(context).getAnimalById(animalId!!.toInt())
+                    if (animal != null)
+                        ShowDetails(animal, navController)
+                }
+                composable("${AppScreens.AnimalForm.name}?id={id}",
+                    arguments = listOf(navArgument("id") { defaultValue = "" })
+                ) {
+                    val animalId = it.arguments?.getString("id")
+                    val animal = if (animalId.isNullOrBlank()) null else
+                        MyRepository.getInstance(context).getAnimalById(animalId.toInt())
+                    ShowCreate(animal, navController)
+                }
+                composable(AppScreens.PhotosGrid.name) {
+                    ShowPhotosGrid { page -> navController.navigate("${AppScreens.PhotosSwipe.name}/${page}") }
+                }
+                composable("${AppScreens.PhotosSwipe.name}/{startPage}") { navBackStackEntry ->
+                    val startPage = navBackStackEntry.arguments?.getString("startPage")
+                    startPage?.let {
+                        ShowSwipeImages(it.toInt()) {
+                            navController.popBackStack(
+                                AppScreens.List6Home.name,
+                                false
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -236,33 +294,33 @@ private fun List6Home(homeInfo: List6HomeInfo, navController: NavController) {
                 modifier = Modifier
                     .padding(16.dp)
             )
-            Spacer(modifier = Modifier.height(50.dp))
-            Row (
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Button(
-                    onClick = {
-                        navController.navigate(AppScreens.PhotosGrid.name)
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 10.dp)
-                ) {
-                    Text("Photos",
-                        fontSize = 26.sp)
-                }
-                Button(
-                    onClick = {
-                        navController.navigate(AppScreens.AnimalsList.name)
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 10.dp)) {
-                    Text("Animals",
-                        fontSize = 26.sp)
-                }
-            }
+//            Spacer(modifier = Modifier.height(50.dp))
+//            Row (
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.SpaceBetween
+//            ) {
+//                Button(
+//                    onClick = {
+//                        navController.navigate(AppScreens.PhotosGrid.name)
+//                    },
+//                    modifier = Modifier
+//                        .weight(1f)
+//                        .padding(horizontal = 10.dp)
+//                ) {
+//                    Text("Photos",
+//                        fontSize = 26.sp)
+//                }
+//                Button(
+//                    onClick = {
+//                        navController.navigate(AppScreens.AnimalsList.name)
+//                    },
+//                    modifier = Modifier
+//                        .weight(1f)
+//                        .padding(horizontal = 10.dp)) {
+//                    Text("Animals",
+//                        fontSize = 26.sp)
+//                }
+//            }
         }
     }
 }

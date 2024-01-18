@@ -32,7 +32,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.jetpackcomposeapp.R
-import com.example.jetpackcomposeapp.list6.ImageFromUri
+import com.example.jetpackcomposeapp.Helpers.ImageFromUri
 import com.example.jetpackcomposeapp.services.PreferencesManager
 
 enum class AppScreens {
@@ -93,64 +93,60 @@ private fun ShowList1Home(homeInfo: HomeInfo, navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = homeInfo.name,
-            fontSize = 30.sp,
-            modifier = Modifier
-                .padding(16.dp)
-        )
-        if (homeInfo.imageUri != null)
-            ImageFromUri(homeInfo.imageUri, Modifier.size(200.dp))
-        else {
-            Image(
-                painter = painterResource(id = R.drawable.person_icon),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(200.dp)
-                    .background(Color.Gray)
-            )
-        }
-        Text(
-            text = homeInfo.nick,
-            fontSize = 30.sp,
-            modifier = Modifier
-                .padding(16.dp)
-        )
+        ShowHomeInfo(homeInfo)
         Spacer(modifier = Modifier.height(50.dp))
-        Row (
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        ShowHomeNavigationButtons(navController)
+    }
+}
+
+@Composable
+private fun ShowHomeInfo(homeInfo: HomeInfo) {
+    Text(
+        text = homeInfo.name,
+        fontSize = 30.sp,
+        modifier = Modifier
+            .padding(16.dp)
+    )
+    if (homeInfo.imageUri != null)
+        ImageFromUri(homeInfo.imageUri, Modifier.size(200.dp))
+    else {
+        Image(
+            painter = painterResource(id = R.drawable.person_icon),
+            contentDescription = null,
+            modifier = Modifier
+                .size(200.dp)
+                .background(Color.Gray)
+        )
+    }
+    Text(
+        text = homeInfo.nick,
+        fontSize = 30.sp,
+        modifier = Modifier
+            .padding(16.dp)
+    )
+}
+
+@Composable
+private fun ShowHomeNavigationButtons(navController: NavController) {
+    class NavButton(val title: String, val navigatePath: String)
+    val navButtons = arrayOf(
+        NavButton("Mobile", AppScreens.PhoneView.name),
+        NavButton("Forms", AppScreens.FormsView.name),
+        NavButton("Rate", AppScreens.RatingView.name)
+    )
+
+    Row (
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        navButtons.forEach { navButton ->
             Button(
-                onClick = {
-                    navController.navigate(AppScreens.PhoneView.name)
-                },
+                onClick = { navController.navigate(navButton.navigatePath) },
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 10.dp)
+                    .padding(horizontal = 8.dp)
             ) {
-                Text("1",
-                    fontSize = 26.sp)
-            }
-            Button(
-                onClick = {
-                    navController.navigate(AppScreens.FormsView.name)
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 10.dp)) {
-                Text("2",
-                    fontSize = 26.sp)
-            }
-            Button(
-                onClick = {
-                    navController.navigate(AppScreens.RatingView.name)
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 10.dp)) {
-                Text("3",
-                    fontSize = 26.sp)
+                Text(navButton.title, fontSize = 18.sp)
             }
         }
     }

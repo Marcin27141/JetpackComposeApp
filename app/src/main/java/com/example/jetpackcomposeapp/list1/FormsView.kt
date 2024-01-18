@@ -14,10 +14,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -26,99 +25,70 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.jetpackcomposeapp.services.PreferencesManager
 
+private class FormField(
+    val title: String,
+    val property: MutableState<String>,
+    val keyboardType: KeyboardType? = null
+)
+
 @Composable
 fun ShowFormsView(nameIn: String, nickIn: String, onBackPressed: () -> Unit) {
     val context = LocalContext.current
-    var name by remember {
+    val name = remember {
         mutableStateOf(nameIn)
     }
-    var email by remember {
+    val email = remember {
         mutableStateOf("")
     }
-    var phone by remember {
+    val phone = remember {
         mutableStateOf("")
     }
-    var nick by remember {
+    val nick = remember {
         mutableStateOf(nickIn)
     }
+
+    val formFields = arrayOf(
+        FormField("Name", name),
+        FormField("Email", email, KeyboardType.Email),
+        FormField("Phone", phone, KeyboardType.Number),
+        FormField("Nick", nick)
+    )
 
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text("Name:", fontSize = 30.sp)
-            Spacer(modifier = Modifier.width(16.dp))
-            OutlinedTextField(
-                value = name,
-                onValueChange = { text ->
-                    name = text
-                },
-                label = { Text("Name") },
-                modifier = Modifier.weight(1f))
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text("Email:", fontSize = 30.sp)
-            Spacer(modifier = Modifier.width(16.dp))
-            OutlinedTextField(
-                value = email,
-                onValueChange = { text ->
-                    email = text
-                },
-                label = { Text("Email") },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Email
-                ),
-                modifier = Modifier.weight(1f))
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text("Phone:", fontSize = 30.sp)
-            Spacer(modifier = Modifier.width(16.dp))
-            OutlinedTextField(
-                value = phone,
-                onValueChange = { text ->
-                    phone = text
-                },
-                label = { Text("Phone") },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number
-                ),
-                modifier = Modifier.weight(1f))
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text("Nick:", fontSize = 30.sp)
-            Spacer(modifier = Modifier.width(16.dp))
-            OutlinedTextField(
-                value = nick,
-                onValueChange = { text ->
-                    nick = text
-                },
-                label = { Text("Nick") },
-                modifier = Modifier.weight(1f))
-        }
+        ShowFormFields(formFields)
         Spacer(modifier = Modifier.height(50.dp))
         Button(onClick = {
-            PreferencesManager.getInstance().setNameAndNick(name, nick, context)
+            PreferencesManager.getInstance().setNameAndNick(name.value, nick.value, context)
             onBackPressed()
         }) {
             Text("Back", fontSize = 24.sp)
+        }
+    }
+}
+
+@Composable
+private fun ShowFormFields(formFields: Array<FormField>) {
+    formFields.forEach { formField ->
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("${formField.title}:", fontSize = 30.sp)
+            Spacer(modifier = Modifier.width(16.dp))
+            OutlinedTextField(
+                value = formField.property.value,
+                onValueChange = { formField.property.value = it },
+                label = { Text(formField.title) },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = formField.keyboardType ?: KeyboardType.Text
+                ),
+                modifier = Modifier.weight(1f))
         }
     }
 }

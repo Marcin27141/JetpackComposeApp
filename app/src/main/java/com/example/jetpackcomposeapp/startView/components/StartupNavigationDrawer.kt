@@ -1,4 +1,4 @@
-package com.example.jetpackcomposeapp.list6.components
+package com.example.jetpackcomposeapp.startView.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -15,52 +15,41 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.jetpackcomposeapp.R
 import com.example.jetpackcomposeapp.helpers.NavigationItem
-import com.example.jetpackcomposeapp.list6.AppScreens
+import com.example.jetpackcomposeapp.R
+import com.example.jetpackcomposeapp.startView.MainAppScreens
 import kotlinx.coroutines.launch
 
 
 private val navigationItems = listOf(
     NavigationItem(
-        "Home",
-        R.drawable.home_icon,
-        AppScreens.List6Home.name
+        "List 1",
+        R.drawable.one_icon,
+        MainAppScreens.List1.name
     ),
     NavigationItem(
-        "Photos",
-        R.drawable.photos_icon,
-        AppScreens.PhotosGrid.name
-    ),
-    NavigationItem(
-        "Animals",
-        R.drawable.predator_icon,
-        AppScreens.AnimalsList.name
+        "List 6",
+        R.drawable.two_icon,
+        MainAppScreens.List6.name
     )
 )
 @Composable
-fun List6NavigationDrawer(navController: NavController, content: @Composable () -> Unit) {
+fun StartupNavigationDrawer(navController: NavController, content: @Composable () -> Unit) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val selectedItemIndex = rememberSaveable {
-        mutableIntStateOf(0)
-    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(modifier = Modifier.fillMaxWidth(0.85F)) {
-                DrawerSheetContent(selectedItemIndex) { route ->
+                DrawerSheetContent() { route ->
                     scope.launch {
                         drawerState.close()
                     }
@@ -73,10 +62,10 @@ fun List6NavigationDrawer(navController: NavController, content: @Composable () 
 }
 
 @Composable
-fun DrawerSheetContent(currentIndex: MutableIntState, navigate: (String) -> Unit) {
+fun DrawerSheetContent(navigate: (String) -> Unit) {
     SheetTitle()
     Spacer(modifier = Modifier.height(16.dp))
-    NavigationItemsList(currentIndex, navigate)
+    NavigationItemsList(navigate)
 }
 
 @Composable
@@ -86,23 +75,23 @@ private fun SheetTitle() {
             .fillMaxWidth()
             .padding(vertical = 50.dp),
     ) {
-        Text(text = "List 6", style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier.align(Alignment.Center))
+        Text(text = "Jetpack Compose", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.align(
+            Alignment.Center))
     }
 }
 
 @Composable
-private fun NavigationItemsList(currentIndex: MutableIntState, navigate: (String) -> Unit) {
-    navigationItems.forEachIndexed { index, navigationItem ->
+private fun NavigationItemsList(navigate: (String) -> Unit) {
+    navigationItems.forEach { navigationItem ->
         NavigationDrawerItem(
             label = { Text(navigationItem.title) },
-            selected = currentIndex.intValue == index,
-            onClick = {
-                currentIndex.intValue = index
-                navigate(navigationItem.route)
-              },
+            selected = false,
+            onClick = { navigate(navigationItem.route) },
             icon = {
-                Icon(imageVector = ImageVector.vectorResource(navigationItem.resourceId), contentDescription = navigationItem.title)
+                Icon(
+                    imageVector = ImageVector.vectorResource(navigationItem.resourceId),
+                    contentDescription = navigationItem.title
+                )
             },
             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding))
     }

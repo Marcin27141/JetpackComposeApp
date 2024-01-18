@@ -18,7 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.jetpackcomposeapp.Helpers.ImageFromUri
+import com.example.jetpackcomposeapp.helpers.ImageFromUri
 import com.example.jetpackcomposeapp.R
 import com.example.jetpackcomposeapp.list6.components.ContentWithDefaultAppBar
 import com.example.jetpackcomposeapp.services.PreferencesManager

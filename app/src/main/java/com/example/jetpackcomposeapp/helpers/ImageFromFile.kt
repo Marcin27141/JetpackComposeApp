@@ -1,4 +1,4 @@
-package com.example.jetpackcomposeapp.Helpers
+package com.example.jetpackcomposeapp.helpers
 
 import android.net.Uri
 import androidx.compose.foundation.Image

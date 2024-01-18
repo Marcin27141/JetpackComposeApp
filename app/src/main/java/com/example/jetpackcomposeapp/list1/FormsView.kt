@@ -32,8 +32,9 @@ private class FormField(
 )
 
 @Composable
-fun ShowFormsView(nameIn: String, nickIn: String, onBackPressed: () -> Unit) {
+fun ShowFormsView(onBackPressed: () -> Unit) {
     val context = LocalContext.current
+    val (nameIn, nickIn) = PreferencesManager.getInstance().getNameAndNick(context)
     val name = remember {
         mutableStateOf(nameIn)
     }

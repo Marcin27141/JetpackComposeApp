@@ -16,7 +16,7 @@ class PreferencesManager {
         }
     }
 
-    fun getNameAndNick(context: Context, defaultName: String, defaultNick: String) : Pair<String, String> {
+    fun getNameAndNick(context: Context, defaultName: String = "Marcin Tkocz", defaultNick: String = "Nick") : Pair<String, String> {
         val data: SharedPreferences = context.getSharedPreferences(DEFAULT_PREFS_NAME, Context.MODE_PRIVATE)
         return Pair(data.getString("name", null) ?: defaultName, data.getString("nick", null) ?: defaultNick);
     }
